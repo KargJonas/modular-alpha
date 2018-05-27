@@ -20,15 +20,11 @@ A lightweight library that simplifies component-based webdevelopment.<br>
 ## Methods
 - ### Element.prototype.css()
 Allows you to easily style HTML Elements with strings or objects.
-
 > Example:
-
 ```javascript
 document.querySelector("#myElement").css("background-color: '#ee4'");
 ```
-
 #### or
-
 ```javascript
 document.querySelector("#myElement").css({
   backgroundColor: "#ee4"
@@ -36,10 +32,19 @@ document.querySelector("#myElement").css({
 ```
 
 - ### select( string, string, ... )
-Selects and creates variables for all given css-selectors using a query-selector. Also it returns an array with the element-variables.
+Selects and <b>creates variables</b> for all given css-selectors using a query-selector. Also it <b>returns an array</b> with the element-variables.
+> Example
+```js
+let myElements = select("#myFirstElement", "#mySecondElement", "body#h1");
 
-- ### create( {parameters} )
-Creates a modular-component with the given parameters ("el", "css", "show", ...).
+myElements[0].css("background-color: '#ee4'");
+mySecondElement.hide();
+```
+
+- ### create( {configuration} )
+Creates a modular-component with the given configuration (<b>"render", "name",</b> "css", "show", "props", ...)
+#### Properties you <b>have to</b> use:
+- 
 
 - ### DomElement.hide()
 Hide a DOM-element.
