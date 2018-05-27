@@ -19,8 +19,8 @@ A lightweight library that simplifies component-based webdevelopment.<br>
 
 ## Methods
 ### - Element.prototype.css()
-Allows you to easily style HTML Elements with strings or objects.
-<u>Example:</u>
+Allows you to easily style HTML Elements with strings or objects.<br>
+<ul>Example:</ul><br>
 ```js
 document.querySelector("#myElement").css("background-color: '#ee4'");
 ```
@@ -45,5 +45,5 @@ Unhide a DOM-element.
 
 ### - String.toHtml()
 Allows you to create a DOM-Element from a string.
-<u>Example:</u>
+<ul>Example:</ul>
 ```let myNewElem = "<h1>Test</h1>".toHtml();```
