@@ -8,16 +8,19 @@
 
 # Modular
 A lightweight library that simplifies component-based webdevelopment.<br>
-### It provides features as:
+<hr>
+
+### Some of the features:
 - a dynamic <b>component-system</b>
 - element-<b>multi-selection</b>
 - easy <b>styling</b> (dom-extention)
 - <b>hiding</b> and <b>unhiding</b> elements
 - <b>creating elements</b> with properties
 - easy <b>string-to-html</b> (dom-extention)
-- ...
+<hr>
 
 ## Methods
+
 - ### Element.prototype.css()
 Allows you to easily style HTML Elements with strings or objects.
 > Example:
@@ -30,6 +33,7 @@ document.querySelector("#myElement").css({
   backgroundColor: "#ee4"
 });
 ```
+<hr>
 
 - ### select( string, string, ... )
 Selects and <b>creates variables</b> for all given css-selectors using a query-selector. Also it <b>returns an array</b> with the element-variables.
@@ -40,9 +44,11 @@ let myElements = select("#myFirstElement", "#mySecondElement", "body#h1");
 myElements[0].css("background-color: '#ee4'");
 mySecondElement.hide();
 ```
+<hr>
 
 - ### render([element, element, ...])
 Renders the given elements.
+<hr>
 
 - ### create( {configuration} )
 Creates a modular-component with the given configuration (**"render", "name",** "css", "show", "props") and returns a component, that can be used just like any other DOM-Element
@@ -79,6 +85,7 @@ render([myComponent]);
 ```
 #### The output:
 ![example-image](https://github.com/KargJonas/random/blob/master/modular/example-image.png)
+<hr>
 
 - ### DomElement.hide()
 Hides a DOM-element.
@@ -86,6 +93,7 @@ Hides a DOM-element.
 ```js
 document.querySelector("#myElement").hide();
 ```
+<hr>
 
 - ### DomElement.show()
 Unhides a DOM-element.
@@ -93,6 +101,7 @@ Unhides a DOM-element.
 ```js
 document.querySelector("#myElement").show();
 ```
+<hr>
 
 - ### String.toHtml()
 Allows you to create a HTML-Element from a string.
