@@ -63,6 +63,26 @@ mySecondElement.hide();
 ```
 <hr>
 
+- ### HTML-insert ( "{{  }}" )
+Is replaced by its evaluated content.
+> Example
+#### In your html file:
+```html
+<body>
+  <script>
+    myVariable = 5;
+  </script>
+  
+  <h1>5 * 3 = {{ myVariable * 3 }}</h1>
+  
+  ...
+</body>
+```
+#### Result:
+![example-image-2](https://github.com/KargJonas/random/blob/master/modular/example-image-2.png)
+
+<hr>
+
 - ### render([element, element, ...])
 Renders the given elements.
 <hr>
@@ -104,7 +124,7 @@ render([myComponent]);
 ![example-image](https://github.com/KargJonas/random/blob/master/modular/example-image.png)
 <hr>
 
-- ### DomElement.hide()
+- ### Element.prototype.hide()
 Hides a DOM-element.
 > Example
 ```js
@@ -112,7 +132,7 @@ document.querySelector("#myElement").hide();
 ```
 <hr>
 
-- ### DomElement.show()
+- ### Element.prototype.show()
 Unhides a DOM-element.
 > Example
 ```js
