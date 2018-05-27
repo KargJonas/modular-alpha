@@ -10,13 +10,30 @@
 A independent, lightweight library that simplifies component-based webdevelopment.<br>
 <hr>
 
-### Some of the features:
+### Some of the features
 - a dynamic <b>component-system</b>
 - element-<b>multi-selection</b>
 - easy <b>styling</b> (dom-extention)
 - <b>hiding</b> and <b>unhiding</b> elements
 - <b>creating elements</b> with properties
 - easy <b>string-to-html</b> (dom-extention)
+<hr>
+
+## How to use it in your project
+Add it in just like any other script (**Before any script that uses the library**).
+
+```html
+<script src="your/path/to/modular.min.js"></script>
+```
+
+#### or
+```html
+<script src="https://github.com/KargJonas/modular.js/blob/master/dist/modular.min.js"></script>
+```
+
+#### or
+With require.js
+
 <hr>
 
 ## Methods
