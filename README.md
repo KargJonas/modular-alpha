@@ -41,6 +41,9 @@ myElements[0].css("background-color: '#ee4'");
 mySecondElement.hide();
 ```
 
+- ### render([element, element, ...])
+Renders the given elements.
+
 - ### create( {configuration} )
 Creates a modular-component with the given configuration (**"render", "name",** "css", "show", "props") and returns a component, that can be used just like any other DOM-Element
 #### Properties you **have to** use:
@@ -50,6 +53,32 @@ Creates a modular-component with the given configuration (**"render", "name",** 
 - **css** Styles the element. Can be a string or a object.
 - **show** if false element is hidden. Can be true or false.
 - **props** properties passed into the elements render function (merged with those passed in from (the) html instance).
+> Example
+#### In your script-file:
+```js
+let myComponent = create({
+  name: "my-component",
+  render: props => {
+    return `<h1>Your name is ${props.name}!`;
+  },
+  css: {
+    backgroundColor: "#f00",
+  }
+});
+
+render([myComponent]);
+```
+#### In your html-file:
+```
+<body>
+  <my-component name="John Doe"></my-component>
+  <my-component name="Jane Johnson"></my-component>
+  
+  ...
+</body>
+```
+#### The output:
+![example-image](https://github.com/KargJonas/random/blob/master/modular/example-image.png)
 
 - ### DomElement.hide()
 Hides a DOM-element.
