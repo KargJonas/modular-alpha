@@ -20,18 +20,19 @@ A lightweight library that simplifies component-based webdevelopment.<br>
 ## Methods
 ### - Element.prototype.css()
 Allows you to easily style HTML Elements with strings or objects.
-###Example:
+
+### Example:
 
 ```javascript
-  document.querySelector("#myElement").css("background-color: '#ee4'");
+document.querySelector("#myElement").css("background-color: '#ee4'");
 ```
 
 #### or
 
 ```javascript
-  document.querySelector("#myElement").css({
-    backgroundColor: "#ee4"
-  });
+document.querySelector("#myElement").css({
+  backgroundColor: "#ee4"
+});
 ```
 
 ### - select( string, string, ... )
