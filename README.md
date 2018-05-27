@@ -18,7 +18,7 @@ A lightweight library that simplifies component-based webdevelopment.<br>
 - easy string-to html (dom-extention)
 - ...
 
-### Feature List
+## Methods
 #### - Element.prototype.css()
 Allows you to easily style HTML Elements with strings or objects.
 
