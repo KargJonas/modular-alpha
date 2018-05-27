@@ -1,4 +1,4 @@
-![version-badge](https://img.shields.io/badge/version-1.0-brightgreen.svg)
+![version-badge](https://img.shields.io/badge/version-1.1-brightgreen.svg)
 ![version-badge](https://img.shields.io/badge/development-active-blue.svg)
 ![version-badge](https://img.shields.io/badge/license-MIT-orange.svg)
 
@@ -7,7 +7,7 @@
 ![logo](https://github.com/KargJonas/random/blob/master/modular/Modular-Logo.png)
 
 # Modular
-A lightweight library that simplifies component-based webdevelopment.<br>
+A independent, lightweight library that simplifies component-based webdevelopment.<br>
 <hr>
 
 ### Some of the features:
