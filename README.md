@@ -9,13 +9,12 @@
 # Modular
 A lightweight library that simplifies component-based webdevelopment.<br>
 ### It provides features as:
-- a dynamic component-system
-- element-multi-selection
-- easy styling (dom-extention)
-- hiding and unhiding elements
-- creating elements with properties
-- dynamic element-outputs
-- easy string-to html (dom-extention)
+- a dynamic <b>component-system</b>
+- element-<b>multi-selection</b>
+- easy <b>styling</b> (dom-extention)
+- <b>hiding</b> and <b>unhiding</b> elements
+- <b>creating elements</b> with properties
+- easy <b>string-to-html</b> (dom-extention)
 - ...
 
 ## Methods
