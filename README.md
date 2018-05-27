@@ -18,10 +18,10 @@ A lightweight library that simplifies component-based webdevelopment.<br>
 - ...
 
 ## Methods
-### - Element.prototype.css()
+- ### Element.prototype.css()
 Allows you to easily style HTML Elements with strings or objects.
 
-### Example:
+> Example:
 
 ```javascript
 document.querySelector("#myElement").css("background-color: '#ee4'");
@@ -35,19 +35,19 @@ document.querySelector("#myElement").css({
 });
 ```
 
-### - select( string, string, ... )
+- ### select( string, string, ... )
 Selects and creates variables for all given css-selectors using a query-selector. Also it returns an array with the element-variables.
 
-### - create( {parameters} )
+- ### create( {parameters} )
 Creates a modular-component with the given parameters ("el", "css", "show", ...).
 
-### - DomElement.hide()
+- ### DomElement.hide()
 Hide a DOM-element.
 
-### - DomElement.show()
+- ### DomElement.show()
 Unhide a DOM-element.
 
-### - String.toHtml()
+- ### String.toHtml()
 Allows you to create a DOM-Element from a string.
 _Example:_
 ```let myNewElem = "<h1>Test</h1>".toHtml();```
