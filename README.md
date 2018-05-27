@@ -38,5 +38,3 @@ Unhide a DOM-element.
 Allows you to create a DOM-Element from a string.
 ##### Example
 ```let myNewElem = "<h1>Test</h1>".toHtml();```
-<br><br>
-# Modular
