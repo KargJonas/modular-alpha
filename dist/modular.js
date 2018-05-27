@@ -121,6 +121,9 @@ function create(conf) {
     if (typeof conf === "object") {
         if (conf.render && conf.name) {
             let component;
+            if (!conf.props) {
+                conf.props = {};
+            }
             component = _modularCore.toHtml(conf.render, conf.props);
             component.css(conf.css);
             component.name = conf.name;
