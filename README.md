@@ -42,17 +42,30 @@ mySecondElement.hide();
 ```
 
 - ### create( {configuration} )
-Creates a modular-component with the given configuration (<b>"render", "name",</b> "css", "show", "props", ...)
-#### Properties you <b>have to</b> use:
-- 
+Creates a modular-component with the given configuration (**"render", "name",** "css", "show", "props") and returns a component, that can be used just like any other DOM-Element
+#### Properties you **have to** use:
+- **render** used to build the element. **Has to return a value!**
+- **name** used to identify the element e.g. at insertion ( <your-element-name></your-element-name> )
+#### Properties you can additionaly use:
+- **css** Styles the element. Can be a string or a object.
+- **show** if false element is hidden. Can be true or false.
+- **props** properties passed into the elements render function (merged with those passed in from (the) html instance).
 
 - ### DomElement.hide()
-Hide a DOM-element.
+Hides a DOM-element.
+> Example
+```js
+document.querySelector("#myElement").hide();
+```
 
 - ### DomElement.show()
-Unhide a DOM-element.
+Unhides a DOM-element.
+> Example
+```js
+document.querySelector("#myElement").show();
+```
 
 - ### String.toHtml()
-Allows you to create a DOM-Element from a string.
+Allows you to create a HTML-Element from a string.
 _Example:_
 ```let myNewElem = "<h1>Test</h1>".toHtml();```
