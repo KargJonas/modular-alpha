@@ -25,12 +25,10 @@ Add it in just like any other script (**Before any script that uses the library*
 ```html
 <script src="your/path/to/modular.min.js"></script>
 ```
-
 #### or
 ```html
 <script src="https://github.com/KargJonas/modular.js/blob/master/dist/modular.min.js"></script>
 ```
-
 #### or
 With require.js
 
