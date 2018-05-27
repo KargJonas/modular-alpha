@@ -1,3 +1,10 @@
+![version-badge](https://img.shields.io/badge/version-1.0-brightgreen.svg)
+![version-badge](https://img.shields.io/badge/development-active-blue.svg)
+
+<br>
+
+![logo](https://github.com/KargJonas/random/blob/master/modular/Modular-Logo.png)
+
 # Modular Light
 A lightweight library that aims to shift stylesheets and the dom towards JavaScript.<br>
 It provides features as:
