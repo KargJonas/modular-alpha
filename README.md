@@ -1,5 +1,3 @@
-> This library is still in under construction and it is not reccomended using it for anything serious until the first stable version.
-
 ![version-badge](https://img.shields.io/badge/version-0.2-brightgreen.svg)
 ![version-badge](https://img.shields.io/badge/development-active-blue.svg)
 ![version-badge](https://img.shields.io/badge/license-MIT-orange.svg)
@@ -10,6 +8,11 @@
 
 # Modular
 A independent, lightweight library that simplifies component-based webdevelopment.<br>
+
+> Warning!
+
+> This library is still under construction and it is not recommended using it for anything "serious" until the first stable version is released.
+
 <hr>
 
 ### Some of the features
