@@ -6,10 +6,25 @@
 </head>
 
 <body>
-    <my-component name="John Doe"></my-component>
-    <my-component name="Jane Johnson"></my-component>
+    <topbar-module></topbar-module>
 
-    <script src="../dist/modular.min.js"></script>
+    <router base="/examples">
+        <page path="/home || /">
+            <home-module></home-module>
+        </page>
+
+        <page path="/404">
+            <h1 style="margin: 7%;">404: This page could not be found!</h1>
+        </page>
+
+        <redirect from="/private" to="/home"></redirect>
+        <redirect from="/super-private" to="/home"></redirect>
+    </router>
+
+    <!-- IMPLEMENT -->
+    <router-link to="/home">Go Home</router-link>
+
+    <script src="../modular.js"></script>
     <script src="main.js"></script>
 </body>
 

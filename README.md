@@ -6,6 +6,8 @@
 
 ![logo](https://github.com/KargJonas/random/blob/master/modular/Modular-Logo.png)
 
+# This documentation is outdated. New one coming soon!
+
 # Modular
 A independent, lightweight library that simplifies component-based webdevelopment.<br>
 
