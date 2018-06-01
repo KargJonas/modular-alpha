@@ -8,13 +8,14 @@
 <body>
     <topbar-module></topbar-module>
 
+    <!-- Multiple pages with the same path: last one used -->
     <router base="/examples">
         <page path="/home || /">
-            <home-module></home-module>
+            <home-module message="to the default homepage"></home-module>
         </page>
 
         <page path="/404">
-            <h1 style="margin: 7%;">404: This page could not be found!</h1>
+            <notfound-module></notfound-module>
         </page>
 
         <redirect from="/private" to="/home"></redirect>
@@ -22,7 +23,7 @@
     </router>
 
     <!-- IMPLEMENT -->
-    <router-link to="/home">Go Home</router-link>
+    <router-link to="/home" style="font-size: 22px; margin: 7%;">Go Home</router-link>
 
     <script src="../modular.js"></script>
     <script src="main.js"></script>

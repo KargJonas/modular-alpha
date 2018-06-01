@@ -21,7 +21,7 @@ const modular = {
         } else return str;
     },
 
-    // Convert an elements attributes to a object
+    // Convert an elements attributes into an object
     elemToObj: elem => {
         let obj = {};
 
@@ -34,32 +34,18 @@ const modular = {
 
     // Throw an error
     err: (msg, pos) => {
-        let error;
-
-        if (pos) {
-            error = `Modular Error: ${msg}\n--> @ ${pos}`;
-        } else {
-            error = `Modular Error: ${msg}`;
-        }
-
-        return error;
+        let error = `Modular Error: ${msg}`;
+        return (pos ? `${error}\n--> @ ${pos}` : error);
     },
 
     warn: (msg, pos) => {
-        let warning;
-
-        if (pos) {
-            warning = `Modular Warning/Info: ${msg}\n--> @ ${pos}`;
-        } else {
-            warning = `Modular Warning/Info: ${msg}`;
-        }
-
-        return warning;
+        let warning = `Modular Warning/Info: ${msg}`;
+        return (pos ? `${warning}\n--> @ ${pos}` : warning);
     },
 
     // Evalates everything between "{{" and "}}"
     parse: context => {
-        const text = context.toString().split("{{");
+        const text = context.split("{{");
         let result = text.shift();
 
         for (const part of text) {
@@ -81,14 +67,22 @@ const modular = {
         console.warn(modular.warn(`Modular info: ${new Date() - modular.initDate}ms`, "time()"));
     },
 
-    render: (components, context) => {
+    render: (context) => {
+        let components = [];
+
+        modular.components.map(comp => {
+            if (context.getElementsByTagName(comp.conf.name)[0]) {
+                components.push(comp);
+            }
+        });
+
         if (components) {
             for (const component of components) {
                 let instances = context.getElementsByTagName(component.conf.name);
 
                 for (let i = instances.length - 1; i >= 0; i--) {
-                    component.rendered = modular.toHtml(component.conf.render, modular.elemToObj(instances[i], component.conf.props));
-                    modular.componentRender(component);
+                    component.rendered = modular.toHtml(component.conf.render, Object.assign(component.conf.props, modular.elemToObj(instances[i]) || {}));
+                    modular.render(component.rendered);
                     component.rendered.css(component.conf.css);
                     instances[i].outerHTML = component.rendered.outerHTML;
                 }
@@ -96,77 +90,77 @@ const modular = {
         }
     },
 
-    componentRender: (component) => {
-        let compList = [];
-
-        modular.components.map(comp => {
-            if (component.rendered.getElementsByTagName(comp.name)) {
-                compList.push(comp);
-            }
-        });
-
-        modular.render(compList, component.rendered);
-    },
-
     getRouter: () => {
-        let router = modular.initialDocument.getElementsByTagName("router");
+        let router = document.getElementsByTagName("router");
         if (router.length > 1) {
-            throw modular.err("To many routers", "render");
+            throw modular.err("More than one router found", "render");
 
         } else if (router.length === 1) {
+            modular.router.exists = true;
             router = router[0];
-            modular.router.element = document.getElementsByTagName("router")[0];
             modular.router.base = router.getAttribute("base");
             let pages = Array.from(router.getElementsByTagName("page"));
             let redirects = Array.from(router.getElementsByTagName("redirect"));
+            let links = Array.from(document.getElementsByTagName("router-link"));
 
             if (!modular.router.base) {
                 modular.router.base = "";
             }
 
             pages.map(page => {
-                // !! need different handeling for 404/notfound page
                 let paths = page.getAttribute("path").replace(/\/$/, "").split("||");
                 paths.map(path => {
                     modular.router.pages[modular.router.base + path.trim()] = page.innerHTML.trim();
                 });
             });
 
-            redirects.map(redi => {
-                // !! need different handeling for 404/notfound page
-                let from = redi.getAttribute("from").replace(/\/$/, "");
-                let to = redi.getAttribute("to").replace(/\/$/, "");
+            redirects.map(redirect => {
+                let from = redirect.getAttribute("from").replace(/\/$/, "");
+                let to = redirect.getAttribute("to").replace(/\/$/, "");
                 modular.router.redirects[modular.router.base + from] = modular.router.base + to;
+            });
+
+
+            links.map(link => {
+                let to = link.getAttribute("to").replace(/\/$/, "");
+                link.setAttribute("onclick", `routerNavigate("${to}")`);
+                link.css({
+                    color: "#00e",
+                    textDecoration: "underline",
+                    cursor: "pointer"
+                });
             });
         }
     },
 
     routerEvent: () => {
-        modular.router.route = window.location.pathname.replace(/\/$/, "");
+        if (modular.router.exists) {
+            modular.router.route = window.location.pathname.replace(/\/$/, "");
 
-        let redirect = modular.router.redirects[modular.router.route];
-        if (redirect) {
-            modular.router.route = redirect;
-            window.requestAnimationFrame(modular.routerEvent);
-
-        } else {
-            modular.router.content = modular.router.pages[modular.router.route];
-            if (modular.router.content) {
-                modular.router.element.innerHTML = modular.router.content;
+            let redirect = modular.router.redirects[modular.router.route];
+            if (redirect) {
+                // !! use routerNavigate()
+                modular.router.route = redirect;
+                window.history.pushState({}, modular.router.route, modular.router.route);
+                modular.routerEvent();
 
             } else {
-                console.warn(modular.warn("Page not found, using default /404 page.", "routerEvent()"));
-                modular.router.route = modular.router.base + "/404";
-                modular.router.pages[modular.router.base + "/404"] = `<h1>404: Page not Found</h1>`;
-                modular.router.content = modular.router.pages[modular.router.base + "/404"];
+                modular.router.content = modular.router.pages[modular.router.route];
+                if (!modular.router.content) {
+                    console.warn(modular.warn("Page not found, using default /404 page.", "routerEvent()"));
+                    modular.router.route = modular.router.base + "/404";
+                    modular.router.pages[modular.router.base + "/404"] = `<h1>404: Page not Found</h1>`;
+                    modular.router.content = modular.router.pages[modular.router.base + "/404"];
+                }
             }
-        }
 
-        window.history.pushState({}, modular.router.route, modular.router.route);
-        modular.router.element.innerHTML = modular.router.content;
+            window.history.pushState({}, modular.router.route, modular.router.route);
+            render();
+        }
     },
 
     router: {
+        exists: false,
         element: undefined,
         route: undefined,
         content: undefined,
@@ -192,33 +186,17 @@ Element.prototype.css = function (css) {
 };
 
 // 
-// Hide Element
-Element.prototype.hide = function () {
-    this.style.display = "none";
-};
-
-// 
-// Show Element
-Element.prototype.show = function () {
-    this.style.display = "block";
-};
-
-// 
-// Convert string to html element
-String.prototype.toHtml = function () {
-    modular.wrapper.innerHTML = this;
-    return modular.wrapper.firstChild;
-}
-
-// 
 // Instantly executed
 modular.hideContent();
-modular.initialDocument = document.documentElement;
+modular.initialDocument = document.documentElement.cloneNode(true);
+modular.getRouter();
 
 // 
 // OnLoad event
 window.addEventListener("load", () => {
+    modular.routerEvent();
     modular.showContent();
+    modular.time();
 });
 
 // 
@@ -228,21 +206,27 @@ class Module {
         if (typeof conf === "object") {
             if (conf.render && conf.name) {
                 this.conf = conf;
+                this.conf.props = (this.conf.props ? this.conf.props : {});
                 modular.components.push(this);
+
             } else throw modular.err("Missing inputs", "new Module()");
-        } else throw modular.err("Invalid input\n--> Must be of type [object]", "new Module()");
+        } else throw modular.err(`Invalid input\n--> Must be of type "object"`, "new Module()");
     }
 }
 
 // 
 // Renders the elements passed in with the values of the corresponding tags
 // ( in the main html-file or other components )
-function render(components) {
-    modular.getRouter();
-    modular.router.route = window.location.pathname.replace(/\/$/, "");
-    if (modular.router.element) {
-        modular.routerEvent();
+function render() {
+    if (modular.router.exists) {
+        document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
     }
-    modular.render(components, modular.initialDocument);
-    document.documentElement.innerHTML = modular.parse(modular.initialDocument.innerHTML);
+    modular.render(document.documentElement);
+    document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML);
+}
+
+function routerNavigate(page) {
+    modular.router.route = modular.router.base + page;
+    window.history.pushState({}, modular.router.route, modular.router.route);
+    modular.routerEvent();
 }

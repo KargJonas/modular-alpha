@@ -1,16 +1,22 @@
 // ALWAYS use a selector ( e.g.: document.getElementById() ) for elements!
+// properties from a tag are always lowercase.
 
-document.body.css({
-    margin: 0,
-    backgroundColor: "#eee",
-    fontFamily: "monospace"
+let body = new Module({
+    name: "body",
+    render: () => {
+        return document.body;
+    },
+    css: {
+        margin: 0,
+        fontFamily: "sans-serif"
+    }
 });
 
 // Topbar Module
 let topbar = new Module({
     name: "topbar-module",
     render: props => {
-        return `<h1>WebSpot</h1>`;
+        return `<h1>Modular ${props.test}</h1>`;
     },
     css: {
         backgroundColor: "#fff",
@@ -21,6 +27,9 @@ let topbar = new Module({
         boxShadow: "0 0 8px #555",
         position: "fixed",
         top: "0"
+    },
+    props: {
+        test: "Hello 123"
     }
 });
 
@@ -28,8 +37,14 @@ let topbar = new Module({
 let pageContent = new Module({
     name: "home-module",
     render: props => {
+        let insert = "";
+        for (let i = 1; i < 4; i++) {
+            insert += `<insert-module index="${i}"></insert-module>`;
+        }
+
         return `<div id="test">
-            <h1>Welcome Home!</h1>
+            <h1>Welcome ${props.message}!</h1>
+            ${insert}
         </div>`;
     },
     css: {
@@ -38,5 +53,21 @@ let pageContent = new Module({
     }
 });
 
-render([topbar, pageContent]);
-modular.time();
+let insertModule = new Module({
+    name: "insert-module",
+    render: props => {
+        return `<h1>This is insert-module #${props.index}</h1>`;
+    },
+    css: {
+        fontSize: "16px",
+        padding: "2px 5px",
+        borderBottom: "1px solid #bbb"
+    }
+});
+
+let notFoundModule = new Module({
+    name: "notfound-module",
+    render: () => {
+        return `<h1 style="margin: 7%;">404: This page could not be found!</h1>`;
+    }
+});
