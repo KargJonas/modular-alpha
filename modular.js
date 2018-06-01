@@ -130,6 +130,8 @@ const modular = {
                     cursor: "pointer"
                 });
             });
+
+            // window.onpopstate = modular.routerEvent; // !!
         }
     },
 
