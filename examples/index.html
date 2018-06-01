@@ -8,6 +8,7 @@
 <body>
     <topbar-module></topbar-module>
 
+
     <!-- Multiple pages with the same path: last one used -->
     <router base="/examples">
         <page path="/home || /">
@@ -22,8 +23,7 @@
         <redirect from="/super-private" to="/home"></redirect>
     </router>
 
-    <!-- IMPLEMENT -->
-    <router-link to="/home" style="font-size: 22px; margin: 7%;">Go Home</router-link>
+    <router-link id="myHomeLink" to="/home" style="font-size: 22px; margin: 0 7%">Go Home</router-link>
 
     <script src="../modular.js"></script>
     <script src="main.js"></script>

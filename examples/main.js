@@ -68,6 +68,8 @@ let insertModule = new Module({
 let notFoundModule = new Module({
     name: "notfound-module",
     render: () => {
-        return `<h1 style="margin: 7%;">404: This page could not be found!</h1>`;
+        return `<h1 style="margin: 130px 7% 0 7%;">404: This page could not be found!</h1>`;
     }
 });
+
+render();

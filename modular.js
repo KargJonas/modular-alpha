@@ -45,7 +45,7 @@ const modular = {
 
     // Evalates everything between "{{" and "}}"
     parse: context => {
-        const text = context.split("{{");
+        const text = context.toString().split("{{");
         let result = text.shift();
 
         for (const part of text) {
@@ -71,19 +71,19 @@ const modular = {
         let components = [];
 
         modular.components.map(comp => {
-            if (context.getElementsByTagName(comp.conf.name)[0]) {
+            if (context.getElementsByTagName(comp.name)[0]) {
                 components.push(comp);
             }
         });
 
         if (components) {
             for (const component of components) {
-                let instances = context.getElementsByTagName(component.conf.name);
+                let instances = context.getElementsByTagName(component.name);
 
                 for (let i = instances.length - 1; i >= 0; i--) {
-                    component.rendered = modular.toHtml(component.conf.render, Object.assign(component.conf.props, modular.elemToObj(instances[i]) || {}));
+                    component.rendered = modular.toHtml(component.render, Object.assign(component.props, modular.elemToObj(instances[i]) || {}));
                     modular.render(component.rendered);
-                    component.rendered.css(component.conf.css);
+                    component.rendered.css(component.css);
                     instances[i].outerHTML = component.rendered.outerHTML;
                 }
             }
@@ -205,8 +205,8 @@ class Module {
     constructor(conf) {
         if (typeof conf === "object") {
             if (conf.render && conf.name) {
-                this.conf = conf;
-                this.conf.props = (this.conf.props ? this.conf.props : {});
+                Object.assign(this, conf);
+                this.props = (conf.props ? conf.props : {});
                 modular.components.push(this);
 
             } else throw modular.err("Missing inputs", "new Module()");
@@ -222,7 +222,7 @@ function render() {
         document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
     }
     modular.render(document.documentElement);
-    document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML);
+    document.documentElement.innerHTML = modular.parse(document.documentElement.outerHTML);
 }
 
 function routerNavigate(page) {
