@@ -137,3 +137,19 @@ A router is defined in HTML and can be modified in a script.
 <!-- This is a router-link it can be outside of the router. When clicked, redirected to the url specifyed in "to". -->
 <router-link to="/home">Go Home</router-link>
 ```
+
+### Important:
+> Inorder to be able to use the router on an Apache webserver you will have to use this server configuration:
+```apache
+<IfModule mod_rewrite.c>
+	RewriteEngine on
+	RewriteCond %{REQUEST_FILENAME} -f [OR]
+	RewriteCond %{REQUEST_FILENAME} -d
+	RewriteRule ^ - [L]
+	RewriteRule ^ index.html [L]
+</IfModule>
+```
+
+> On a node server, you will have to use a static configuration (send the same page as response for all directorys).
+
+Further details coming soon.
