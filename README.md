@@ -140,7 +140,7 @@ A router is defined in HTML and can be modified in a script.
 
 ### Important:
 > Inorder to be able to use the router on an Apache webserver you will have to use this server configuration:
-```htaccess
+```apache
 <IfModule mod_rewrite.c>
 	RewriteEngine on
 	RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -151,4 +151,5 @@ A router is defined in HTML and can be modified in a script.
 ```
 
 > On a node server, you will have to use a static configuration (send the same page as response for all directorys).
+
 Further details coming soon.
