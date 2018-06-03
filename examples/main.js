@@ -12,27 +12,6 @@ let body = new Module({
     }
 });
 
-// Topbar Module
-let topbar = new Module({
-    name: "topbar-module",
-    render: props => {
-        return `<h1>Modular ${props.test}</h1>`;
-    },
-    css: {
-        backgroundColor: "#fff",
-        fontSize: "36px",
-        padding: "5px 7%",
-        margin: 0,
-        width: "100%",
-        boxShadow: "0 0 8px #555",
-        position: "fixed",
-        top: "0"
-    },
-    props: {
-        test: "Hello 123"
-    }
-});
-
 // Page Module
 let pageContent = new Module({
     name: "home-module",

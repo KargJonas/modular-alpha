@@ -107,6 +107,8 @@ const modular = {
                 modular.router.base = "";
             }
 
+            modular.router.pages[modular.router.base + "/404"] = "<h1>404: Page not Found</h1>";
+
             pages.map(page => {
                 let paths = page.getAttribute("path").replace(/\/$/, "").split("||");
                 paths.map(path => {
@@ -131,32 +133,29 @@ const modular = {
                 });
             });
 
-            // window.onpopstate = modular.routerEvent; // !!
+            // window.addEventListener("popstate", () => {
+            //     modular.routerEvent();
+            // });
         }
     },
 
     routerEvent: () => {
         if (modular.router.exists) {
             modular.router.route = window.location.pathname.replace(/\/$/, "");
-
             let redirect = modular.router.redirects[modular.router.route];
+
             if (redirect) {
-                // !! use routerNavigate()
-                modular.router.route = redirect;
-                window.history.pushState({}, modular.router.route, modular.router.route);
-                modular.routerEvent();
+                routerNavigate(redirect.slice(modular.router.base.length));
 
             } else {
                 modular.router.content = modular.router.pages[modular.router.route];
                 if (!modular.router.content) {
-                    console.warn(modular.warn("Page not found, using default /404 page.", "routerEvent()"));
                     modular.router.route = modular.router.base + "/404";
-                    modular.router.pages[modular.router.base + "/404"] = `<h1>404: Page not Found</h1>`;
                     modular.router.content = modular.router.pages[modular.router.base + "/404"];
                 }
             }
 
-            window.history.pushState({}, modular.router.route, modular.router.route);
+            window.history.pushState(null, null, modular.router.route);
             render();
         }
     },
@@ -217,18 +216,19 @@ class Module {
 }
 
 // 
-// Renders the elements passed in with the values of the corresponding tags
-// ( in the main html-file or other components )
+// Renders and parses everything
 function render() {
     if (modular.router.exists) {
         document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
     }
     modular.render(document.documentElement);
-    document.documentElement.innerHTML = modular.parse(document.documentElement.outerHTML);
+    document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML);
 }
 
+// 
+// Navigates the router to the provided url
 function routerNavigate(page) {
     modular.router.route = modular.router.base + page;
-    window.history.pushState({}, modular.router.route, modular.router.route);
+    window.history.pushState(null, null, modular.router.route);
     modular.routerEvent();
 }
