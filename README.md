@@ -1,4 +1,4 @@
-![version-badge](https://img.shields.io/badge/version-0.3-brightgreen.svg)
+![version-badge](https://img.shields.io/badge/version-0.4-brightgreen.svg)
 ![version-badge](https://img.shields.io/badge/development-active-blue.svg)
 ![version-badge](https://img.shields.io/badge/license-MIT-orange.svg)
 
@@ -8,10 +8,6 @@
 
 # Modular
 A independent, lightweight library that simplifies component-based webdevelopment.<br>
-
-> Warning!
-
-> This library is still under construction and it is not recommended using it for anything "serious" until the first stable version is released.
 
 <hr>
 
@@ -76,7 +72,7 @@ Creates a Module with the given configuration ( **"render", "name",** "css", "pr
 - **render** used to build the element. Can be a DOM-element, a string or a function ( That returns a value ).
 - **name** used to identify the element at insertion ( <your-element-name></your-element-name> )
 #### Properties you can additionaly use:
-- **css** Styles the element. Can be a string or a object.
+- **css** Used to style the element(s).
 - **props** properties passed into the elements render function ( merged with those passed in from the/a html instance ).
 > Example
 #### In your script-file:
@@ -84,10 +80,12 @@ Creates a Module with the given configuration ( **"render", "name",** "css", "pr
 let myComponent = new Module({
   name: "my-component",
   render: props => {
-    return `<h1>Your name is ${props.name}!</h1>`;
+    return `<h1 id="myTitle">Your name is ${props.name}!</h1>`;
   },
   css: {
-    backgroundColor: "#f00",
+    "#myTitle:hover": {
+      backgroundColor: "#dc4"
+    }
   }
 });
 
