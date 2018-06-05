@@ -3,27 +3,14 @@
 
 <head>
     <title>Modular</title>
+    <link rel="stylesheet" href="../dev/bootstrap.min.css">
 </head>
 
 <body>
-    <!-- Multiple pages with the same path: last one used -->
-    <router base="/examples">
-        <page path="/home || /">
-            <home-module message="to the default homepage"></home-module>
-        </page>
+    <home-module></home-module>
 
-        <page path="/404">
-            <notfound-module></notfound-module>
-        </page>
-
-        <redirect from="/private" to="/home"></redirect>
-        <redirect from="/super-private" to="/home"></redirect>
-    </router>
-
-    <router-link id="myHomeLink" to="/home" style="font-size: 22px; margin: 0 7%">Go Home</router-link>
-
-    <!-- <script src="../dev/modular.js"></script> -->
     <script src="../dist/modular.js"></script>
+    <!-- <script src="../dev/modular.js"></script> -->
     <script src="main.js"></script>
 </body>
 

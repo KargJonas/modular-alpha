@@ -16,6 +16,9 @@ const modular = {
 
         if (typeof str === "string") {
             modular.wrapper.innerHTML = str;
+            if (modular.wrapper.children.length > 1) {
+                throw modular.err("Only one element allowed in render!\n--> If you want to render multiple elements, put them in a div.", "modular.toHtml()");
+            }
             return modular.wrapper.firstChild;
 
         } else return str;
@@ -26,10 +29,23 @@ const modular = {
         let obj = {};
 
         Array.from(elem.attributes).map(attr => {
-            obj[attr.name] = attr.value
+            obj[attr.name] = attr.value;
         });
 
         return obj;
+    },
+
+    transformStyleObj: obj => {
+        let res = [];
+
+        Object.entries(obj).map(entry => {
+            Object.assign(modular.wrapper.style, entry[1]);
+            entry[1] = modular.wrapper.getAttribute("style");
+            res.push(entry);
+        });
+
+        modular.wrapper.style = "";
+        return res;
     },
 
     // Throw an error
@@ -79,11 +95,21 @@ const modular = {
         if (components) {
             for (const component of components) {
                 let instances = context.getElementsByTagName(component.name);
+                let css = [];
+
+                component.className = `_modular_${component.name}`;
+
+                if (component.css) {
+                    css = modular.transformStyleObj(component.css);
+                    css.map(el => {
+                        modular.documentStyle.innerHTML += `.${component.className} > ${el[0]} {${el[1]}}`;
+                    });
+                }
 
                 for (let i = instances.length - 1; i >= 0; i--) {
                     component.rendered = modular.toHtml(component.render, Object.assign(component.props, modular.elemToObj(instances[i]) || {}));
+                    component.rendered.classList.add(component.className);
                     modular.render(component.rendered);
-                    component.rendered.css(component.css);
                     instances[i].outerHTML = component.rendered.outerHTML;
                 }
             }
@@ -126,11 +152,7 @@ const modular = {
             links.map(link => {
                 let to = link.getAttribute("to").replace(/\/$/, "");
                 link.setAttribute("onclick", `routerNavigate("${to}")`);
-                link.css({
-                    color: "#00e",
-                    textDecoration: "underline",
-                    cursor: "pointer"
-                });
+                link.style = "color: #00e; text-decoration: underline; cursor: pointer;";
             });
 
             // window.addEventListener("popstate", () => {
@@ -170,20 +192,10 @@ const modular = {
         redirects: {}
     },
     components: [],
+    documentStyle: document.createElement("style"),
     wrapper: document.createElement("div"),
     initialDocument: undefined,
     initDate: new Date()
-};
-
-// 
-// Set CSS
-Element.prototype.css = function (css) {
-    if (typeof css === "string") {
-        this.setAttribute("style", css.replace(/\s+/g, ' ').trim());
-
-    } else if (typeof css === "object") {
-        Object.assign(this.style, css);
-    }
 };
 
 // 
@@ -218,11 +230,13 @@ class Module {
 // 
 // Renders and parses everything
 function render() {
+    modular.documentStyle.innerHTML = "";
     if (modular.router.exists) {
         document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
     }
     modular.render(document.documentElement);
     document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML);
+    document.head.appendChild(modular.documentStyle);
 }
 
 // 
