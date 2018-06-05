@@ -81,7 +81,7 @@ Creates a Module with the given configuration ( **"render", "name",** "css", "pr
 > Example
 #### In your script-file:
 ```javascript
-let myComponent = create({
+let myComponent = new Module({
   name: "my-component",
   render: props => {
     return `<h1>Your name is ${props.name}!</h1>`;
