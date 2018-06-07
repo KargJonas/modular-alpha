@@ -272,7 +272,7 @@ function routerNavigate(page) {
 }
 
 // 
-// simplyfies working with conditions, loops and such in render
+// simplifies working with conditions, loops and such in render
 function el() {
     let str = "";
     Array.from(arguments).map(attr => {

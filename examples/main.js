@@ -1,19 +1,18 @@
-let home = new Mod({
-    name: "home-module",
-    render: props => {
+let myMod = new Mod({
+    name: "my-mod",
+    render: () => {
         el("<div>");
-        for (let i of myArr) el(`<h1>${i}</h1>`);
-        el("</div>");
+        el("<h1>List of heroes</h1>");
 
-        return el();
-    },
-    css: {
-        h1: {
-            border: "1px solid #000"
+        for (let hero of heroes) {
+          el(`<li>${hero} is a true hero!</li>`);
         }
+
+        el("</div>");
+        return el();
     }
 });
 
-let myArr = ["fghfgh", "hfghdj", "iozjkhk", "wergnt"];
+let heroes = ["John Doe", "Jane Dough", "Johnny Doeson"];
 
 renderAll();
