@@ -1,18 +1,19 @@
-let home = new Module({
+let home = new Mod({
     name: "home-module",
     render: props => {
-        return `<div>
-            <h1 class="t">Test</h1>
-            <h1 class="t">Test</h1>
-            <h1 class="t">Test</h1>
-        </div>`;
+        el("<div>");
+        for (let i of myArr) el(`<h1>${i}</h1>`);
+        el("</div>");
+
+        return el();
     },
     css: {
-        ".t:hover": {
-            border: "2px dashed #000",
-            color: "#000"
+        h1: {
+            border: "1px solid #000"
         }
     }
 });
 
-render();
+let myArr = ["fghfgh", "hfghdj", "iozjkhk", "wergnt"];
+
+renderAll();

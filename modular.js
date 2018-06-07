@@ -1,97 +1,66 @@
-"use strict";
 // Jonas Karg 2018
-
-// 
-// Core
+"use strict";
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance."); } }; }();
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function."); } }
 
 var modular = {
-    // Hiding and unhiding the entire page
-    hideContent: function hideContent() {
-        return document.documentElement.style.display = "none";
-    },
-    showContent: function showContent() {
-        return document.documentElement.style.display = "block";
-    },
-
-    // Convert values render-property content to element
+    hideContent: function hideContent() {return document.documentElement.style.display = "none"},
+    showContent: function showContent() {return document.documentElement.style.display = "block"},
     toHtml: function toHtml(str, props) {
         if (typeof str === "function") {
+            modular.tempEl.push("");
             str = str(props || {});
+            modular.tempEl.pop();
+            if (!str) throw modular.err("\"render()\" must return a value.", "@ modular.toHtml()");
         }
-
         if (typeof str === "string") {
             modular.wrapper.innerHTML = str;
-            if (modular.wrapper.children.length > 1) {
-                throw modular.err("Only one element allowed in render!\n--> If you want to render multiple elements, put them in a div.", "modular.toHtml()");
-            }
+            if (modular.wrapper.children.length > 1) throw modular.err("\"render()\" returned multiple elements.", "\"render()\" may only return one element.", "When multiple elements must be returned, they may be enclosed by a \"div\"-tag.", "@ modular.toHtml()");
             return modular.wrapper.firstChild;
         } else return str;
     },
-
-    // Convert an elements attributes into an object
     elemToObj: function elemToObj(elem) {
         var obj = {};
-
         Array.from(elem.attributes).map(function (attr) {
             obj[attr.name] = attr.value;
         });
-
         return obj;
     },
-
     transformStyleObj: function transformStyleObj(obj) {
         var res = [];
-
         Object.entries(obj).map(function (entry) {
-            Object.assign(modular.wrapper.style, entry[1]);
-            entry[1] = modular.wrapper.getAttribute("style");
+            if (typeof entry[1] !== "string") {
+                Object.assign(modular.wrapper.style, entry[1]);
+                entry[1] = modular.wrapper.getAttribute("style");
+            }
             res.push(entry);
         });
-
-        modular.wrapper.style = "";
         return res;
     },
-
-    // Throw an error
-    err: function err(msg, pos) {
-        var error = "Modular Error: " + msg;
-        return pos ? error + "\n--> @ " + pos : error;
+    err: function err() {
+        var args = Array.from(arguments);
+        var error = "(Modular):\n";
+        args.map(function (arg) {error += "--> " + arg + "\n"});
+        return new Error(error);
     },
-
-    warn: function warn(msg, pos) {
-        var warning = "Modular Warning/Info: " + msg;
-        return pos ? warning + "\n--> @ " + pos : warning;
-    },
-
-    // Evalates everything between "{{" and "}}"
     parse: function parse(context) {
         var text = context.toString().split("{{");
         var result = text.shift();
-
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
-
         try {
             for (var _iterator = text[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                 var part = _step.value;
-
                 var _part$split = part.split("}}"),
                     _part$split2 = _slicedToArray(_part$split, 3),
                     key = _part$split2[0],
                     rest = _part$split2[1],
                     overflow = _part$split2[2];
 
-                if (!key || rest == undefined || overflow) {
-                    throw modular.err("Insert-Delimiters \"{{\" and \"}}\" do not match.", "parse()");
-                }
-
+                if (!key || rest == undefined || overflow) throw modular.err("Insert-Delimiters \"{{\" and \"}}\" do not match.", "@ modular.parse()");
                 key = eval(key.trim());
                 key = modular.parse(key);
                 result += key + rest;
@@ -110,52 +79,44 @@ var modular = {
                 }
             }
         }
-
         return result;
     },
-
-    time: function time() {
-        console.warn(modular.warn("Modular info: " + (new Date() - modular.initDate) + "ms", "time()"));
-    },
-
     render: function render(context) {
         var components = [];
-
         modular.components.map(function (comp) {
-            if (context.getElementsByTagName(comp.name)[0]) {
-                components.push(comp);
-            }
+            if (context.getElementsByTagName(comp.name)[0]) components.push(comp);
         });
-
         if (components) {
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
             var _iteratorError2 = undefined;
-
             try {
                 var _loop = function _loop() {
                     var component = _step2.value;
-
                     var instances = context.getElementsByTagName(component.name);
                     var css = [];
-
                     component.className = "_modular_" + component.name;
-
                     if (component.css) {
                         css = modular.transformStyleObj(component.css);
                         css.map(function (el) {
-                            modular.documentStyle.innerHTML += "." + component.className + " > " + el[0] + " {" + el[1] + "}";
+                            modular.documentStyle.innerHTML += "." + component.className + " > " + el[0] + " {" + el[1] + "} ";
                         });
                     }
-
                     for (var i = instances.length - 1; i >= 0; i--) {
-                        component.rendered = modular.toHtml(component.render, Object.assign(component.props, modular.elemToObj(instances[i]) || {}));
-                        component.rendered.classList.add(component.className);
-                        modular.render(component.rendered);
-                        instances[i].outerHTML = component.rendered.outerHTML;
+                        var ifAttribute = instances[i].getAttribute("m-if");
+
+                        if (ifAttribute) {
+                            ifAttribute = eval(ifAttribute);
+                            instances[i].removeAttribute("m-if");
+                        } else ifAttribute = true;
+                        if (ifAttribute) {
+                            component.rendered = modular.toHtml(component.render, Object.assign(component.props, modular.elemToObj(instances[i]) || {}));
+                            component.rendered.classList.add(component.className);
+                            modular.render(component.rendered);
+                            instances[i].outerHTML = component.rendered.outerHTML;
+                        } else instances[i].outerHTML = "";
                     }
                 };
-
                 for (var _iterator2 = components[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     _loop();
                 }
@@ -175,22 +136,20 @@ var modular = {
             }
         }
     },
-
     getRouter: function getRouter() {
         var router = document.getElementsByTagName("router");
         if (router.length > 1) {
-            throw modular.err("More than one router found", "render");
+            throw modular.err("More than one \"router\"-tag found.", "Only one \"router\"-tag allowed.", "@ modular.getRouter()");
         } else if (router.length === 1) {
-            modular.router.exists = true;
-            router = router[0];
-            modular.router.base = router.getAttribute("base");
             var pages = Array.from(router.getElementsByTagName("page"));
             var redirects = Array.from(router.getElementsByTagName("redirect"));
             var links = Array.from(document.getElementsByTagName("router-link"));
 
-            if (!modular.router.base) {
-                modular.router.base = "";
-            }
+            modular.router.exists = true;
+            router = router[0];
+            modular.router.base = router.getAttribute("base");
+
+            if (!modular.router.base) modular.router.base = "";
 
             modular.router.pages[modular.router.base + "/404"] = "<h1>404: Page not Found</h1>";
 
@@ -212,18 +171,12 @@ var modular = {
                 link.setAttribute("onclick", "routerNavigate(\"" + to + "\")");
                 link.style = "color: #00e; text-decoration: underline; cursor: pointer;";
             });
-
-            // window.addEventListener("popstate", () => {
-            //     modular.routerEvent();
-            // });
         }
     },
-
     routerEvent: function routerEvent() {
         if (modular.router.exists) {
             modular.router.route = window.location.pathname.replace(/\/$/, "");
             var redirect = modular.router.redirects[modular.router.route];
-
             if (redirect) {
                 routerNavigate(redirect.slice(modular.router.base.length));
             } else {
@@ -233,12 +186,12 @@ var modular = {
                     modular.router.content = modular.router.pages[modular.router.base + "/404"];
                 }
             }
-
             window.history.pushState(null, null, modular.router.route);
-            render();
+            renderAll();
         }
     },
-
+    components: [],
+    tempEl: [],
     router: {
         exists: false,
         element: undefined,
@@ -248,60 +201,42 @@ var modular = {
         pages: {},
         redirects: {}
     },
-    components: [],
     documentStyle: document.createElement("style"),
     wrapper: document.createElement("div"),
-    initialDocument: undefined,
-    initDate: new Date()
+    initialDocument: undefined
 };
-
-// 
-// Instantly executed
 modular.hideContent();
 modular.initialDocument = document.documentElement.cloneNode(true);
 modular.getRouter();
-
-// 
-// OnLoad event
 window.addEventListener("load", function () {
     modular.routerEvent();
     modular.showContent();
-    modular.time();
 });
-
-// 
-// The module class
-
-var Module = function Module(conf) {
-    _classCallCheck(this, Module);
-
+var Mod = function Mod(conf) {
+    _classCallCheck(this, Mod);
     if ((typeof conf === "undefined" ? "undefined" : _typeof(conf)) === "object") {
         if (conf.render && conf.name) {
             Object.assign(this, conf);
             this.props = conf.props ? conf.props : {};
             modular.components.push(this);
-        } else throw modular.err("Missing inputs", "new Module()");
-    } else throw modular.err("Invalid input\n--> Must be of type \"object\"", "new Module()");
+        } else throw modular.err("Missing values.", "\"name\" and \"render()\" are required.", "new Module()");
+    } else throw modular.err("Invalid Module-configuration.", "Configuration must be of type \"object.\"", "new Module()");
 };
-
-// 
-// Renders and parses everything
-
-
-function render() {
+function renderAll() {
     modular.documentStyle.innerHTML = "";
-    if (modular.router.exists) {
-        document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
-    }
+    if (modular.router.exists) document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
     modular.render(document.documentElement);
     document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML);
     document.head.appendChild(modular.documentStyle);
 }
-
-// 
-// Navigates the router to the provided url
 function routerNavigate(page) {
     modular.router.route = modular.router.base + page;
     window.history.pushState(null, null, modular.router.route);
     modular.routerEvent();
+}
+function el() {
+    var str = "";
+    Array.from(arguments).map(function (attr) {str += attr});
+    modular.tempEl[modular.tempEl.length - 1] += str;
+    return modular.tempEl[modular.tempEl.length - 1];
 }

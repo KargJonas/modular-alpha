@@ -1,5 +1,5 @@
-![version-badge](https://img.shields.io/badge/version-0.4-brightgreen.svg)
-![version-badge](https://img.shields.io/badge/development-active-blue.svg)
+![version-badge](https://img.shields.io/badge/version-1.0-brightgreen.svg)
+![version-badge](https://img.shields.io/badge/development-completed-blue.svg)
 ![version-badge](https://img.shields.io/badge/license-MIT-orange.svg)
 
 <br>
@@ -12,54 +12,20 @@ A independent, lightweight library that simplifies component-based webdevelopmen
 <hr>
 
 ## How to use it in your project
-Add it in just like any other script (**Before any script that uses the library**).
-
+Just like any other script.
 ```html
-<script src="your/path/to/modular.min.js"></script>
+<script src="path/to/modular.js">
 ```
-#### or
-```html
-<script src="https://github.com/KargJonas/modular.js/blob/master/dist/modular.min.js"></script>
-```
-#### or
-With require.js
 
 <hr>
 
 ## Methods
-
-- ### Element.prototype.css()
-Allows you to easily style HTML Elements with strings or objects.
-> Example:
-```javascript
-document.querySelector("#myElement").css("background-color: '#ee4'");
-```
-#### or
-```javascript
-document.querySelector("#myElement").css({
-  backgroundColor: "#ee4"
-});
-```
-<hr>
-
 - ### HTML-insert ( "{{  }}" )
 Is replaced by its evaluated content.
-> Example
-#### In your html file:
+> Example usage
 ```html
-<body>
-  <script>
-    myVariable = 5;
-  </script>
-  
-  <h1>5 * 3 = {{ myVariable * 3 }}</h1>
-  
-  ...
-</body>
+<h1>{{5 + 5}}</h1>
 ```
-#### Result:
-![example-image-2](https://github.com/KargJonas/random/blob/master/modular/example-image-2.png)
-
 <hr>
 
 - ### render()
