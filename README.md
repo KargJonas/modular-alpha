@@ -70,8 +70,6 @@ Creates a new "Module" with the given configuration ( **"render", "name",** "css
 >   ...
 > </body>
 > ```
-> #### The output:
-> ![example-image](https://github.com/KargJonas/random/blob/master/modular/example-image.png)
 <hr>
 
 - ### el()
