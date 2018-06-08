@@ -29,8 +29,8 @@ const modular = {
                 `"render()" may only return one element.`,
                 `When multiple elements must be returned, they may be enclosed by a "div"-tag.`,
                 "@ modular.toHtml()");
-            return modular.wrapper.firstChild;
 
+            return modular.wrapper.firstChild;
         } else return str;
     },
 
@@ -38,7 +38,9 @@ const modular = {
     elemToObj: elem => {
         let obj = {};
         Array.from(elem.attributes).map(attr => {
-            obj[attr.name] = attr.value;
+            let val = attr.value.trim();
+            if (val.startsWith("{{") && val.endsWith("}}")) val = eval(val.slice(2, -2).trim());
+            obj[attr.name] = val;
         });
 
         return obj;
@@ -142,12 +144,12 @@ const modular = {
                 "@ modular.getRouter()");
 
         } else if (router.length === 1) {
+            router = router[0];
             let pages = Array.from(router.getElementsByTagName("page"));
             let redirects = Array.from(router.getElementsByTagName("redirect"));
             let links = Array.from(document.getElementsByTagName("router-link"));
 
             modular.router.exists = true;
-            router = router[0];
             modular.router.base = router.getAttribute("base");
 
             if (!modular.router.base) modular.router.base = "";

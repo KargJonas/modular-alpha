@@ -183,12 +183,12 @@ var modular = {
         if (router.length > 1) {
             throw modular.err("More than one \"router\"-tag found.", "Only one \"router\"-tag allowed.", "@ modular.getRouter()");
         } else if (router.length === 1) {
+            router = router[0];
             var pages = Array.from(router.getElementsByTagName("page"));
             var redirects = Array.from(router.getElementsByTagName("redirect"));
             var links = Array.from(document.getElementsByTagName("router-link"));
 
             modular.router.exists = true;
-            router = router[0];
             modular.router.base = router.getAttribute("base");
 
             if (!modular.router.base) modular.router.base = "";
