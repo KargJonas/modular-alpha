@@ -97,6 +97,11 @@ Simplifies working with "html" in Mod.render(). Adds the passed in argumants to 
 > ### Output
 > ![example-image-3](https://github.com/KargJonas/random/blob/master/modular/example-image-3.png)
 
+Another way of doing this would be passing in the array through the modules-html-tag and iterationg through props.heroes:
+> ```html
+> <my-mod heroes="{{ ['John Doe', 'Jane Dough', 'Johnny Doeson'] }}"></my-mod>
+> ```
+
 <hr>
 
 - ### The router

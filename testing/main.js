@@ -4,7 +4,7 @@ let myMod = new Mod({
         el("<div>");
         el("<h1>List of heroes</h1>");
 
-        for (let hero of props.name) {
+        for (let hero of props.heroes) {
           el(`<li>${hero} is a true hero!</li>`);
         }
 
@@ -18,7 +18,5 @@ let myMod = new Mod({
         }
     }
 });
-
-let heroes = ["John Doe", "Jane Dough", "Johnny Doeson"];
 
 renderAll();
