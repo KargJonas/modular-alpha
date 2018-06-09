@@ -1,71 +1,103 @@
 // Jonas Karg 2018
 "use strict";
+
+// used for testing
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+console.time();
+
+// 
+// core
 var modular = {
+    // hiding/unhiding the entire page
     hideContent: function hideContent() {
         return document.documentElement.style.display = "none";
     },
     showContent: function showContent() {
         return document.documentElement.style.display = "block";
     },
+
+    // convert values render-property content to element
     toHtml: function toHtml(str, props) {
         if (typeof str === "function") {
             modular.tempEl.push("");
             str = str(props || {});
             modular.tempEl.pop();
             if (!str) throw modular.err("\"render()\" must return a value.", "@ modular.toHtml()");
-        }
-        if (typeof str === "string") {
-            modular.wrapper.innerHTML = str;
-            if (modular.wrapper.children.length > 1) throw modular.err("\"render()\" returned multiple elements.", "\"render()\" may only return one element.", "When multiple elements must be returned, they may be enclosed by a \"div\"-tag.", "@ modular.toHtml()");
-            return modular.wrapper.firstChild;
-        } else return str;
+
+            if (typeof str === "string") {
+                modular.wrapper.innerHTML = str;
+                return modular.wrapper;
+            } else throw modular.err("A Modules \"render\"-function must return a string.", "@ modular.toHtml()");
+        } else throw modular.err("Mod.render must be a function.", "@modular.toHtml()");
     },
+
+    // convert an elements attributes into an object
     elemToObj: function elemToObj(elem) {
         var obj = {};
+
         Array.from(elem.attributes).map(function (attr) {
             var val = attr.value.trim();
             if (val.startsWith("{{") && val.endsWith("}}")) val = eval(val.slice(2, -2).trim());
             obj[attr.name] = val;
         });
+
         return obj;
     },
+
+    // transform style-object ( css: { .. } ) to global CSS
     transformStyleObj: function transformStyleObj(obj) {
         var res = [];
+
         Object.entries(obj).map(function (entry) {
             if (typeof entry[1] !== "string") {
                 Object.assign(modular.wrapper.style, entry[1]);
                 entry[1] = modular.wrapper.getAttribute("style");
             }
             res.push(entry);
+            modular.wrapper.removeAttribute("style");
         });
+
         return res;
     },
+
+    // returns a error-string
     err: function err() {
         var args = Array.from(arguments);
         var error = "(Modular):\n";
         args.map(function (arg) {
             error += "--> " + arg + "\n";
         });
+
         return new Error(error);
     },
+
+    // evaluates everything between "{{" and "}}" in a given string
     parse: function parse(context) {
         var text = context.toString().split("{{");
         var result = text.shift();
+
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
+
         try {
             for (var _iterator = text[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                 var part = _step.value;
+
                 var _part$split = part.split("}}"),
                     _part$split2 = _slicedToArray(_part$split, 3),
                     key = _part$split2[0],
                     rest = _part$split2[1],
                     overflow = _part$split2[2];
+
                 if (!key || rest == undefined || overflow) throw modular.err("Insert-Delimiters \"{{\" and \"}}\" do not match.", "@ modular.parse()");
+
                 key = eval(key.trim());
                 key = modular.parse(key);
                 result += key + rest;
@@ -84,35 +116,48 @@ var modular = {
                 }
             }
         }
+
         return result;
     },
+
+    // replaces Module-instances with the modules rendered content
     render: function render(context) {
         var components = [];
+
         modular.components.map(function (comp) {
             if (context.getElementsByTagName(comp.name)[0]) components.push(comp);
         });
+
         if (components) {
             var _iteratorNormalCompletion2 = true;
             var _didIteratorError2 = false;
             var _iteratorError2 = undefined;
+
             try {
                 var _loop = function _loop() {
                     var component = _step2.value;
+
                     var instances = context.getElementsByTagName(component.name);
                     var css = [];
+
                     component.className = "_modular_" + component.name;
+
                     if (component.css) {
                         css = modular.transformStyleObj(component.css);
+
                         css.map(function (el) {
-                            modular.documentStyle.innerHTML += "." + component.className + " > " + el[0] + " {" + el[1] + "} ";
+                            modular.documentStyle.innerHTML += "." + component.className + " " + el[0] + " {" + el[1] + "} ";
                         });
                     }
+
                     for (var i = instances.length - 1; i >= 0; i--) {
                         var ifAttribute = instances[i].getAttribute("m-if");
+
                         if (ifAttribute) {
                             ifAttribute = eval(ifAttribute);
                             instances[i].removeAttribute("m-if");
                         } else ifAttribute = true;
+
                         if (ifAttribute) {
                             component.rendered = modular.toHtml(component.render, Object.assign(component.props, modular.elemToObj(instances[i]) || {}));
                             component.rendered.classList.add(component.className);
@@ -121,6 +166,7 @@ var modular = {
                         } else instances[i].outerHTML = "";
                     }
                 };
+
                 for (var _iterator2 = components[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     _loop();
                 }
@@ -140,17 +186,32 @@ var modular = {
             }
         }
     },
+
+    // variables
     components: [],
     tempEl: [],
+
     documentStyle: document.createElement("style"),
     wrapper: document.createElement("div"),
+
     initialDocument: undefined
 };
+
+// 
+// instantly executed
 modular.hideContent();
 modular.initialDocument = document.documentElement.cloneNode(true);
+
+// 
+// load event
 window.addEventListener("load", modular.showContent);
+
+// 
+// the module class
+
 var Mod = function Mod(conf) {
     _classCallCheck(this, Mod);
+
     if ((typeof conf === "undefined" ? "undefined" : _typeof(conf)) === "object") {
         if (conf.render && conf.name) {
             Object.assign(this, conf);
@@ -159,6 +220,11 @@ var Mod = function Mod(conf) {
         } else throw modular.err("Missing values.", "\"name\" and \"render()\" are required.", "new Module()");
     } else throw modular.err("Invalid Module-configuration.", "Configuration must be of type \"object.\"", "new Module()");
 };
+
+// 
+// renders and parses everything
+
+
 function renderAll() {
     modular.documentStyle.innerHTML = "";
     document.documentElement.innerHTML = modular.initialDocument.innerHTML;
@@ -167,11 +233,15 @@ function renderAll() {
     document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML);
     document.head.appendChild(modular.documentStyle);
 }
+
+// 
+// simplifies working with conditions, loops and such in render
 function el() {
     var str = "";
     Array.from(arguments).map(function (attr) {
         str += attr;
     });
     modular.tempEl[modular.tempEl.length - 1] += str;
+
     return modular.tempEl[modular.tempEl.length - 1];
 }

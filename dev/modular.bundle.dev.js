@@ -20,23 +20,19 @@ const modular = {
             if (!str) throw modular.err(
                 `"render()" must return a value.`,
                 "@ modular.toHtml()");
-        }
 
-        if (typeof str === "string") {
-            modular.wrapper.innerHTML = str;
-            if (modular.wrapper.children.length > 1) throw modular.err(
-                `"render()" returned multiple elements.`,
-                `"render()" may only return one element.`,
-                `When multiple elements must be returned, they may be enclosed by a "div"-tag.`,
-                "@ modular.toHtml()");
+            if (typeof str === "string") {
+                modular.wrapper.innerHTML = str;
+                return modular.wrapper;
 
-            return modular.wrapper.firstChild;
-        } else return str;
+            } else throw modular.err(`A Modules "render"-function must return a string.`, "@ modular.toHtml()");
+        } else throw modular.err("Mod.render must be a function.", "@modular.toHtml()");
     },
 
     // convert an elements attributes into an object
     elemToObj: elem => {
         let obj = {};
+        
         Array.from(elem.attributes).map(attr => {
             let val = attr.value.trim();
             if (val.startsWith("{{") && val.endsWith("}}")) val = eval(val.slice(2, -2).trim());
@@ -56,6 +52,7 @@ const modular = {
                 entry[1] = modular.wrapper.getAttribute("style");
             }
             res.push(entry);
+            modular.wrapper.removeAttribute("style");
         });
 
         return res;
@@ -109,7 +106,7 @@ const modular = {
                 if (component.css) {
                     css = modular.transformStyleObj(component.css);
                     css.map(el => {
-                        modular.documentStyle.innerHTML += `.${component.className} > ${el[0]} {${el[1]}} `;
+                        modular.documentStyle.innerHTML += `.${component.className} ${el[0]} {${el[1]}} `;
                     });
                 }
 
