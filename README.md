@@ -21,6 +21,7 @@ Versions that contain .bundle in the name have all additional modular-extensions
 > **modular.router.js** is a babel-compressed version of the modular router.<br>
 > **modular.bundle.dev.js** is a uncompressed version of modular that contains all extensions (in v1.1 only modular.router)
 
+The goal with this is to reduce loadtime for stuff that you don't actually need.
 <hr>
 
 ## How to use it in your project
