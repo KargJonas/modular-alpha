@@ -11,10 +11,22 @@
 
 <hr>
 
+
+## About .dev and .bundle:
+Modular versions that contain .dev in the file-name are non-babel versions for development.
+
+Versions that contain .bundle in the name have all additional modular-extensions already built into them and ones that contain keaywords like .router only contain the component from the keyword.
+
+> #### Example:
+> **modular.router.js** is a babel-compressed version of the modular router.<br>
+> **modular.bundle.dev.js** is a uncompressed version of modular that contains all extensions (in v1.1 only modular.router)
+
+<hr>
+
 ## How to use it in your project
 Just like any other script.<br>
 > ```html
-> <script src="path/to/modular.js">
+> <script src="path/to/modular.bundle.js">
 > ```
 
 <hr>

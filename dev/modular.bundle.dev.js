@@ -258,8 +258,8 @@ class Mod {
 // renders and parses everything
 function renderAll() {
     modular.documentStyle.innerHTML = "";
+    document.documentElement.innerHTML = modular.initialDocument.innerHTML;
     if (modular.router.exists) document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
-
     modular.render(document.documentElement);
     document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML);
     document.head.appendChild(modular.documentStyle);

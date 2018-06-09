@@ -20,7 +20,6 @@ var modular = {
         if (typeof str === "string") {
             modular.wrapper.innerHTML = str;
             if (modular.wrapper.children.length > 1) throw modular.err("\"render()\" returned multiple elements.", "\"render()\" may only return one element.", "When multiple elements must be returned, they may be enclosed by a \"div\"-tag.", "@ modular.toHtml()");
-
             return modular.wrapper.firstChild;
         } else return str;
     },
@@ -31,7 +30,6 @@ var modular = {
             if (val.startsWith("{{") && val.endsWith("}}")) val = eval(val.slice(2, -2).trim());
             obj[attr.name] = val;
         });
-
         return obj;
     },
     transformStyleObj: function transformStyleObj(obj) {
@@ -67,7 +65,6 @@ var modular = {
                     key = _part$split2[0],
                     rest = _part$split2[1],
                     overflow = _part$split2[2];
-
                 if (!key || rest == undefined || overflow) throw modular.err("Insert-Delimiters \"{{\" and \"}}\" do not match.", "@ modular.parse()");
                 key = eval(key.trim());
                 key = modular.parse(key);
@@ -143,79 +140,17 @@ var modular = {
             }
         }
     },
-    getRouter: function getRouter() {
-        var router = document.getElementsByTagName("router");
-        if (router.length > 1) {
-            throw modular.err("More than one \"router\"-tag found.", "Only one \"router\"-tag allowed.", "@ modular.getRouter()");
-        } else if (router.length === 1) {
-            router = router[0];
-            var pages = Array.from(router.getElementsByTagName("page"));
-            var redirects = Array.from(router.getElementsByTagName("redirect"));
-            var links = Array.from(document.getElementsByTagName("router-link"));
-            modular.router.exists = true;
-            modular.router.base = router.getAttribute("base");
-            if (!modular.router.base) modular.router.base = "";
-            modular.router.pages[modular.router.base + "/404"] = "<h1>404: Page not Found</h1>";
-            pages.map(function (page) {
-                var paths = page.getAttribute("path").replace(/\/$/, "").split("||");
-                paths.map(function (path) {
-                    modular.router.pages[modular.router.base + path.trim()] = page.innerHTML.trim();
-                });
-            });
-            redirects.map(function (redirect) {
-                var from = redirect.getAttribute("from").replace(/\/$/, "");
-                var to = redirect.getAttribute("to").replace(/\/$/, "");
-                modular.router.redirects[modular.router.base + from] = modular.router.base + to;
-            });
-            links.map(function (link) {
-                var to = link.getAttribute("to").replace(/\/$/, "");
-                link.setAttribute("onclick", "routerNavigate(\"" + to + "\")");
-                link.style = "color: #00e; text-decoration: underline; cursor: pointer;";
-            });
-        }
-    },
-    routerEvent: function routerEvent() {
-        if (modular.router.exists) {
-            modular.router.route = window.location.pathname.replace(/\/$/, "");
-            var redirect = modular.router.redirects[modular.router.route];
-            if (redirect) {
-                routerNavigate(redirect.slice(modular.router.base.length));
-            } else {
-                modular.router.content = modular.router.pages[modular.router.route];
-                if (!modular.router.content) {
-                    modular.router.route = modular.router.base + "/404";
-                    modular.router.content = modular.router.pages[modular.router.base + "/404"];
-                }
-            }
-            window.history.pushState(null, null, modular.router.route);
-            renderAll();
-        }
-    },
     components: [],
     tempEl: [],
-    router: {
-        exists: false,
-        element: undefined,
-        route: undefined,
-        content: undefined,
-        base: undefined,
-        pages: {},
-        redirects: {}
-    },
     documentStyle: document.createElement("style"),
     wrapper: document.createElement("div"),
     initialDocument: undefined
 };
 modular.hideContent();
 modular.initialDocument = document.documentElement.cloneNode(true);
-modular.getRouter();
-window.addEventListener("load", function () {
-    modular.routerEvent();
-    modular.showContent();
-});
+window.addEventListener("load", modular.showContent);
 var Mod = function Mod(conf) {
     _classCallCheck(this, Mod);
-
     if ((typeof conf === "undefined" ? "undefined" : _typeof(conf)) === "object") {
         if (conf.render && conf.name) {
             Object.assign(this, conf);
@@ -226,16 +161,11 @@ var Mod = function Mod(conf) {
 };
 function renderAll() {
     modular.documentStyle.innerHTML = "";
-    if (modular.router.exists) document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
-
+    document.documentElement.innerHTML = modular.initialDocument.innerHTML;
+    if (modular.router && modular.router.exists) document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
     modular.render(document.documentElement);
     document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML);
     document.head.appendChild(modular.documentStyle);
-}
-function routerNavigate(page) {
-    modular.router.route = modular.router.base + page;
-    window.history.pushState(null, null, modular.router.route);
-    modular.routerEvent();
 }
 function el() {
     var str = "";
@@ -243,6 +173,5 @@ function el() {
         str += attr;
     });
     modular.tempEl[modular.tempEl.length - 1] += str;
-
     return modular.tempEl[modular.tempEl.length - 1];
 }
