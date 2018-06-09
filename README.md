@@ -1,5 +1,5 @@
 ![version-badge](https://img.shields.io/badge/version-1.1-brightgreen.svg)
-![version-badge](https://img.shields.io/badge/development-completed-blue.svg)
+![version-badge](https://img.shields.io/badge/development-active-blue.svg)
 ![version-badge](https://img.shields.io/badge/license-MIT-orange.svg)
 
 <br>
