@@ -125,8 +125,8 @@ const modular = {
                         component.rendered = modular.toHtml(component.render, Object.assign(component.props, modular.elemToObj(instances[i]) || {}));
                         component.rendered.classList.add(component.className);
                         modular.render(component.rendered);
-                        instances[i].outerHTML = component.rendered.outerHTML;
-
+                        if (instances[i]) instances[i].outerHTML = component.rendered.outerHTML;
+                        
                     } else instances[i].outerHTML = "";
                 }
             }
