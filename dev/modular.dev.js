@@ -23,7 +23,8 @@ const modular = {
 
             if (typeof str === "string") {
                 modular.wrapper.innerHTML = str;
-                return modular.wrapper;
+                modular.wrapper.removeAttribute("class");
+                return modular.wrapper.cloneNode;
 
             } else throw modular.err(`A Modules "render"-function must return a string.`, "@ modular.toHtml()");
         } else throw modular.err("Mod.render must be a function.", "@modular.toHtml()");

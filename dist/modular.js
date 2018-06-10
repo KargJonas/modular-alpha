@@ -30,6 +30,7 @@ var modular = {
 
             if (typeof str === "string") {
                 modular.wrapper.innerHTML = str;
+                modular.wrapper.removeAttribute("class");
                 return modular.wrapper;
             } else throw modular.err("A Modules \"render\"-function must return a string.", "@ modular.toHtml()");
         } else throw modular.err("Mod.render must be a function.", "@modular.toHtml()");
