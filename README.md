@@ -7,7 +7,7 @@
 ![logo](https://github.com/KargJonas/random/blob/master/modular/Modular-Logo.png)
 
 # Modular
-#### A independent, lightweight library that simplifies component-based webdevelopment.<br>
+#### A independent, lightweight framework that simplifies component-based webdevelopment.<br>
 
 <hr>
 

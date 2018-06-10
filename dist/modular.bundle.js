@@ -9,8 +9,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-console.time();
-
 // 
 // core
 var modular = {
