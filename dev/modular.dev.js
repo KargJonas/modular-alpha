@@ -24,7 +24,7 @@ const modular = {
             if (typeof str === "string") {
                 modular.wrapper.innerHTML = str;
                 modular.wrapper.removeAttribute("class");
-                return modular.wrapper.cloneNode;
+                return modular.wrapper;
 
             } else throw modular.err(`A Modules "render"-function must return a string.`, "@ modular.toHtml()");
         } else throw modular.err("Mod.render must be a function.", "@modular.toHtml()");
@@ -123,6 +123,7 @@ const modular = {
 
                     if (ifAttribute) {
                         component.rendered = modular.toHtml(component.render, Object.assign(component.props, modular.elemToObj(instances[i]) || {}));
+                        console.log(component.rendered);
                         component.rendered.classList.add(component.className);
                         modular.render(component.rendered);
                         if (instances[i]) instances[i].outerHTML = component.rendered.outerHTML;
