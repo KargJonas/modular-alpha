@@ -1,9 +1,14 @@
+// Modular Router
 // Jonas Karg 2018
+"use strict";
 
-window.addEventListener("load", () => {
-    if (modular.allows_plugins === true) {
-        if (modular.router) throw modular.err("Modular-Router already included.", "@ window.addEventListener()"); 
-        // Adding router-functionality to modular
+if (typeof modular !== "object") throw new Error("(Modular-Plugin):\n--> Modular not found.\n--> Modular is required for plugins to work.");
+
+modular.addPlugin({
+    name: "router",
+    version: "1.0",
+
+    onInit() {
         modular.router = {
             exists: false,
             element: undefined,
@@ -14,7 +19,11 @@ window.addEventListener("load", () => {
             redirects: {},
 
             // registers the structure of a router-tag
-            getRouter: () => {
+            getRouter() {
+                modular.plugins.map(plugin => {
+                    if (plugin["onGetRouter"]) plugin.onGetRouter();
+                });
+
                 let router = document.getElementsByTagName("router");
                 if (router.length > 1) {
                     throw modular.err(
@@ -48,7 +57,6 @@ window.addEventListener("load", () => {
                         modular.router.redirects[modular.router.base + from] = modular.router.base + to;
                     });
 
-
                     links.map(link => {
                         let to = link.getAttribute("to").replace(/\/$/, "");
                         link.setAttribute("onclick", `routerNavigate("${to}")`);
@@ -58,7 +66,11 @@ window.addEventListener("load", () => {
             },
 
             // updates the router if existing
-            routerEvent: () => {
+            routerEvent() {
+                modular.plugins.map(plugin => {
+                    if (plugin["onRouterEvent"]) plugin.onRouterEvent();
+                });
+
                 if (modular.router) {
                     modular.router.route = window.location.pathname.replace(/\/$/, "");
                     let redirect = modular.router.redirects[modular.router.route];
@@ -75,21 +87,18 @@ window.addEventListener("load", () => {
                     }
 
                     window.history.pushState(null, null, modular.router.route);
-                    renderAll();
+                    render();
                 }
             }
         };
 
-        // 
-        // navigates the router to the provided url
         function routerNavigate(page) {
             modular.router.route = modular.router.base + page;
             window.history.pushState(null, null, modular.router.route);
             modular.router.routerEvent();
         }
 
-        modular.router.getRouter();
-        if (modular.router.exists) modular.router.routerEvent();
-
-    } else throw new Error("(Modular-Router):\n--> Modular not found.\n--> Modular is required for Modular-Router to work.\n@ window.addEventListener()");
+        // modular.router.getRouter();
+        // if (modular.router.exists) modular.router.routerEvent();
+    }
 });
