@@ -167,7 +167,7 @@ After you have created all of your components, you have to call render() inorder
     ...
 ```
 
-> Whereever you insert your component
+> Wherever you insert your component
 ```html
     <my-component title="First list" loop="20"></my-component>
     <my-component title="Second list" loop="0"></my-component>
