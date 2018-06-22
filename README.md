@@ -2,10 +2,10 @@
 ![version-badge](https://img.shields.io/badge/development-active-blue.svg)
 ![version-badge](https://img.shields.io/badge/license-MIT-orange.svg)
 
-<br>
-
 # Modular
 ### A lightweight, independent framework that simplifies component-based webdevelopment.
+
+<br>
 
 ![logo](https://github.com/KargJonas/random/blob/master/modular/Modular-Logo.png)
 
