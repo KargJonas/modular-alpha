@@ -4,12 +4,10 @@
 
 <br>
 
-![logo](https://github.com/KargJonas/random/blob/master/modular/Modular-Logo.png)
-
 # Modular
 ### A lightweight, independent framework that simplifies component-based webdevelopment.
 
-<br>
+![logo](https://github.com/KargJonas/random/blob/master/modular/Modular-Logo.png)
 
 > Using modular in your project is simple. Just include it in your HTML with all the plugins you want to use following it and you're ready to go.
 
