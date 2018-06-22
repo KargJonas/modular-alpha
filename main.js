@@ -1,15 +1,21 @@
-let myEl = new Component({
-    tag: "test",
+let myComp = new Component({
+    tag: "my-component",
 
     render(props) {
-        el(`<h1>Working ${props.testval}</h1>`);
+        el(`<h1>Hello World, ${props.name}</h1>`);
+        el(`<p>you are user #${props.number}!</p>`);
+
         return el();
     },
 
     css: {
         "h1": {
-            color: "#f00"
+            "color": "#f00"
         }
+    },
+
+    props: {
+        number: 17
     }
 });
 
