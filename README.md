@@ -3,7 +3,7 @@
 ![version-badge](https://img.shields.io/badge/license-MIT-orange.svg)
 
 # Modular
-### A lightweight, independent framework that simplifies component-based webdevelopment.
+### A lightweight, independent framework that simplifies component-based webdevelopment and matches great with most librarys.
 
 <br>
 
