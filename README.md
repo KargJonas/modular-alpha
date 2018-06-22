@@ -57,7 +57,7 @@ let myComp = new Component({
 ## The "render"-attribute
 > The "render"-attribute of a component has to be a function, which returns a value. When a component is rendered, the components' "render"-function will be called and the returned value, encapsulated by a div will replace it's HTML-tag.
 
-> The "name"-attribute will be passed into the components' "render"-function inside of a object - in this case the object is called "props" so "props.name" would be "John Doe". _Remember - You can have as many attributes as you want_. They will all become entries in the object, that is passed into the components' "render"-function.
+> The "name"-attribute will be passed into the components' render-function inside of a object - in this case the object is called "props" so "props.name" would be "John Doe". _Remember - You can have as many attributes as you want_. They will all become entries in the object, that is passed into the components' render-function.
 
 > Also, components can be instantiated (in HTML) as often as you want. The cool part is that you can use different HTML-attribures every time.
 
@@ -131,3 +131,43 @@ After you have created all of your components, you have to call render() inorder
 
 ### Output
 ![example-img](https://github.com/KargJonas/random/blob/master/modular/example-image-4.png)
+
+## el()
+> The "el"-function is a global function, which is supposed to help you work with elements in "component.render". You can pass as many strings into "el()" as you want. They will be joined and then returned. When el() is called next time it's arguments will again be joined and added to the provious ones. When the components' render-function returns a value el's content is cleared ().
+
+> All of this allows us to do some funky stuff in component.render fairly easily.
+
+### The render-function from the component above can be reritten to something like this:
+```js
+    ...
+    render(props) {
+        el(`<h1>Hello World, ${props.name}</h1>`);
+        el(`<p>you are user #${props.number}!</p>`);
+        return el();
+        // Returns "<h1>Hello World, John Doe</h1><p>you are user #17!</p>"
+    },
+    ...
+```
+
+### Another example usage:
+```js
+    ...
+    render(props) {
+        el(`<h1>${props.title}</h1>`);
+
+        if (props.loop == 0) el("<p>No Loop.</p>");
+
+        for(let i = 0; i < props.loop; i++) {
+            el(`<li>Hi - I am list-item #${i + 1}!</li>`);
+        }
+
+        return el();
+    },
+    ...
+```
+```html
+    <my-component title="First list" loop="20"></my-component>
+    <my-component title="Second list" loop="0"></my-component>
+```
+### Output
+![example-img](https://github.com/KargJonas/random/blob/master/modular/example-image-5.png)
