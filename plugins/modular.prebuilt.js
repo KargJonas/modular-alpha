@@ -32,7 +32,7 @@ modular.addPlugin({
                 "button:hover": {
                     color: "#4e7",
                     backgroundColor: "transparent",
-                    border: "#4e7"
+                    border: "2px solid #4e7"
                 }
             }
         });
