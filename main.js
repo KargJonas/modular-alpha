@@ -2,20 +2,18 @@ let myComp = new Component({
     tag: "my-component",
 
     render(props) {
-        el(`<h1>Hello World, ${props.name}</h1>`);
-        el(`<p>you are user #${props.number}!</p>`);
-
+        el(`<h1>Prebuilt components test</h1>`);
+        el(`<mp-green-btn text="test"></mp-green-btn>`);
+        // el("<my-comp-2></my-comp-2>");
         return el();
     },
+});
 
-    css: {
-        "h1": {
-            "color": "#f00"
-        }
-    },
-
-    props: {
-        number: 17
+let myComp2 = new Component({
+    tag: "my-comp-2",
+    render() {
+        el("<h1>Test</h1>");
+        return el();
     }
 });
 

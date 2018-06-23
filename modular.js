@@ -90,6 +90,7 @@ const modular = {
             if (context.getElementsByTagName(comp.tag)[0]) components.push(comp);
         });
 
+
         if (!components) return;
 
         for (const component of components) {
@@ -228,13 +229,11 @@ class Component {
             `Configuration must be of type "object."`,
             "new Module()");
 
-        if (!conf.render || !conf.tag || conf._index) throw modular.err(
-            "Missing or forbidden attributes.",
+        if (!conf.render || !conf.tag) throw modular.err(
+            "Missing attributes.",
             `The attributes "tag" and "render()" are required.`,
-            `"_index" is a forbidden attribute.`,
             "new Module()");
 
-        this._index = modular.components.length;
 
         Object.assign(this, conf);
         this.props = (conf.props ? conf.props : {});
@@ -256,11 +255,14 @@ function render() {
     modular.plugins.map(plugin => {
         if (plugin["onRender"]) plugin.onRender();
     });
+
     modular.documentStyle.innerHTML = "";
     document.documentElement.innerHTML = modular.initialDocument.innerHTML;
+
     if (modular.router && modular.router.exists) document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
     modular.renderInContext(document.documentElement);
     document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML, window);
+
     modular.plugins.map(plugin => {
         if (plugin["renderDone"]) plugin.renderDone();
     });
