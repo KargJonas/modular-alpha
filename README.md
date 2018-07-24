@@ -137,7 +137,7 @@ After you have created all of your components, you have to call render() inorder
 
 > All of this allows us to do some funky stuff in component.render fairly easily.
 
-### The render-function from the component above can be reritten to something like this:
+### The render-function from the component above can be rewritten to something like this:
 ```js
     ...
     render(props) {
