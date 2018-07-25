@@ -9,7 +9,7 @@ modular.addPlugin({
     version: "0.1",
 
     onInit() {
-        let _modular_prebuilt = new Component({
+        let _modular_prebuilt_btn_green_ = new Component({
             tag: "mp-green-btn",
 
             render(props) {
@@ -26,13 +26,13 @@ modular.addPlugin({
                     color: "#fff",
                     outline: "none",
                     userSelect: "none",
-                    cursor: "pointer"
+                    cursor: "pointer",
+                    border: "2px solid #4e7"
                 },
 
                 "button:hover": {
                     color: "#4e7",
                     backgroundColor: "transparent",
-                    border: "2px solid #4e7"
                 }
             }
         });

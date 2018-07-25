@@ -9,36 +9,6 @@ const modular = {
     hideContent: () => document.documentElement.style.display = "none",
     showContent: () => document.documentElement.style.display = "block",
 
-    // convert an elements attributes into an object
-    elemToObj(elem) {
-        let obj = {};
-
-        Array.from(elem.attributes).map(attr => {
-            let val = attr.value.trim();
-            if (val.startsWith("{{") && val.endsWith("}}")) val = eval(val.slice(2, -2).trim());
-            obj[attr.name] = val;
-        });
-
-        return obj;
-    },
-
-    // transform style-object ( css: { .. } ) to global CSS
-    transformStyleObj(obj) {
-        let res = [];
-        let wrapper = document.createElement("div");
-
-        Object.entries(obj).map(entry => {
-            if (typeof entry[1] !== "string") {
-                Object.assign(wrapper.style, entry[1]);
-                entry[1] = wrapper.getAttribute("style");
-            }
-            res.push(entry);
-            wrapper.removeAttribute("style");
-        });
-
-        return res;
-    },
-
     // returns an error-string
     err() {
         let args = Array.from(arguments);
@@ -58,77 +28,78 @@ const modular = {
         return inf;
     },
 
-    // evaluates everything between "{{" and "}}" in a given string
-    parse(htmlContext, jsContext) {
-        const text = htmlContext.toString().split("{{");
-        let result = text.shift();
+    // convert an elements attributes into an object
+    elemToObj(elem) {
+        let obj = {};
 
-        for (const part of text) {
-            let [key, rest, overflow] = part.split("}}");
-            if (!key || rest == undefined || overflow) throw modular.err(
-                `Insert-Delimiters "{{" and "}}" do not match.`,
-                "modular.parse()");
+        Array.from(elem.attributes).map(attr => {
+            let val = attr.value.trim();
+            if (/{[^{}\n]*}/.test(val)) val = eval(val.slice(1, -1));
+            obj[attr.name] = val;
+        });
 
-            key = function (keyStr) {
-                return eval(keyStr);
-            }.call(jsContext, key.trim());
-            key = modular.parse(key);
-            result += (key + rest);
-        }
+        return obj;
+    },
 
-        return result;
+    // Transforms all custom tags into divs with classes and pushes them into the "instances"-array in th corresponding component
+    getInstances(context) {
+        Object.entries(modular.components).map(entry => {
+            const component = entry[1];
+            component.__data.instances = Array.from(context.getElementsByTagName(component.tag));;
+
+            component.__data.instances.map(instance => {
+                const newElement = document.createElement("div");
+                Array.from(instance.attributes).map(attribute => newElement.setAttribute(attribute.name, attribute.value));
+                newElement.setAttribute("data-modular-id", component.tag);
+                newElement.classList.add("__component__");
+                // newElement.innerHTML = instance.innerHTML;
+                instance.outerHTML = newElement.outerHTML;
+            });
+        });
+    },
+
+    // transform style-object ( css: { .. } ) to global CSS
+    globalCSS(selector, obj) {
+        let res = [];
+        let wrapper = document.createElement("div");
+
+        Object.entries(obj).map(entry => {
+            if (typeof entry[1] !== "string") {
+                Object.assign(wrapper.style, entry[1]);
+                entry[1] = wrapper.getAttribute("style");
+            }
+            res.push(entry);
+        });
+
+        return res.map(el => {
+            return `${selector} ${el[0]}{${el[1]}}`;
+        }).join(" ");
+    },
+
+    applyStyles() {        
+        Object.entries(modular.components).map(entry => {
+            const component = entry[1];
+            const selector = `div[data-modular-id="${component.tag}"]`;
+
+            if (component.css) {
+                modular.styleTag.innerHTML += modular.globalCSS(selector, component.css);
+            }
+        });
     },
 
     // replaces Module-instances with the module's rendered content
-    renderInContext(context) {
-        let components = [];
+    renderContext(context) {
+        modular.getInstances(context);
+        let instances = Array.from(context.getElementsByClassName("__component__"));
 
-        modular.components.map(comp => {
-            if (context.getElementsByTagName(comp.tag)[0]) components.push(comp);
+        instances.map(instance => {
+            const component = modular.components[instance.getAttribute("data-modular-id")];
+            modular.tempEl.push("");
+            component.rendered = component.render(Object.assign(component.props, modular.elemToObj(instance) || {}));
+            modular.tempEl.pop();
+            instance.innerHTML = component.rendered;
+            modular.renderContext(instance)
         });
-
-        if (!components) return;
-
-        for (const component of components) {
-            let instances = Array.from(context.getElementsByTagName(component.tag));
-            instances.map(instance => {
-                let ifAttribute = instance.getAttribute("m-if");
-                if (ifAttribute) {
-                    ifAttribute = eval(ifAttribute);
-                    instance.removeAttribute("m-if");
-
-                } else ifAttribute = true;
-
-                if (ifAttribute) {
-                    if (typeof component.render !== "function") throw modular.err(
-                        "Mod.render must be a function.",
-                        "modular.toHtml()");
-
-                    modular.tempEl.push("");
-                    component.rendered = component.render(Object.assign(component.props, modular.elemToObj(instance) || {}));
-                    modular.tempEl.pop();
-
-                    if (!component.rendered) throw modular.err(
-                        `"render()" must return a value.`,
-                        "modular.toHtml()");
-
-                    if (typeof component.rendered !== "string") throw modular.err(
-                        `A Modules "render"-function must return a string.`,
-                        "modular.toHtml()");
-
-                    let wrapper = document.createElement("div");
-                    wrapper.innerHTML = component.rendered;
-                    wrapper.classList.add(component.className);
-                    wrapper.classList.add("_component_");
-                    modular.renderInContext(wrapper);
-                    instance.outerHTML = wrapper.outerHTML;
-
-                } else instance.outerHTML = "";
-            });
-
-            modular.documentStyle.innerHTML += component.transformedCss;
-        }
-        document.head.appendChild(modular.documentStyle);
     },
 
     addPlugin(plugin) {
@@ -165,21 +136,6 @@ const modular = {
         return isLoaded;
     },
 
-    loadScripts(srcs, callback) {
-        if (srcs.constructor !== Array) throw modular.err(`"loadScrips()" expects an array.`,
-            "modular.loadScripts()");
-
-        srcs.map(src => {
-            if (!src.endsWith(".js")) throw modular.err(`"loadScripts()" can only load ".js"-files.`,
-                "modular.loadScripts()");
-
-            modular.scriptTag.src = src;
-            document.head.appendChild(modular.scriptTag);
-        });
-
-        if (callback) callback();
-    },
-
     time() {
         console.warn(modular.info(
             `(${performance.now() - modular.initPerf}ms)`,
@@ -187,29 +143,29 @@ const modular = {
     },
 
     // variables
-    components: [],
+    components: {},
     tempEl: [],
-    documentStyle: document.createElement("style"),
+    styleTag: document.createElement("style"),
     scriptTag: document.createElement("script"),
-    initialDocument: undefined,
     plugins: [],
-    initPerf: performance.now()
+    initPerf: performance.now(),
+    onRender: new Event("onRender"),
+    afterRender: new Event("afterRender"),
+    onInit: new Event("onInit"),
+    afterInit: new Event("afterInit")
 };
 
 // 
 // instantly executed
+window.dispatchEvent(modular.onInit);
 modular.hideContent();
-modular.initialDocument = document.documentElement.cloneNode(true);
 modular.scriptTag.setAttribute("onload", "this.remove();");
+document.head.appendChild(modular.styleTag);
+window.dispatchEvent(modular.afterInit);
 
 // 
 // load event
-window.addEventListener("load", () => {
-    modular.showContent();
-    modular.plugins.map(plugin => {
-        if (plugin["onLoad"]) plugin.onLoad();
-    });
-});
+window.addEventListener("load", () => modular.showContent());
 
 // 
 // the module class
@@ -227,35 +183,20 @@ class Component {
 
         Object.assign(this, conf);
         this.props = (conf.props ? conf.props : {});
-        this.className = `_component_${this.tag}`;
-
-        if (this.css) {
-            this.transformedCss = modular.transformStyleObj(this.css).map(el => {
-                return `.${this.className} ${el[0]} {${el[1]}} `;
-            });
-        } else this.transformedCss = "";
-
-        modular.components.push(this);
+        this.__data = {};
+        this.__data.instances = [];
+        modular.components[this.tag] = this;
+        // modular.components.push(this);
     }
 }
 
 // 
-// renders and parses everything
+// renders the documentElement
 function render() {
-    modular.plugins.map(plugin => {
-        if (plugin["onRender"]) plugin.onRender();
-    });
-
-    modular.documentStyle.innerHTML = "";
-    document.documentElement.innerHTML = modular.initialDocument.innerHTML;
-
-    if (modular.router && modular.router.exists) document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
-    modular.renderInContext(document.documentElement);
-    document.documentElement.innerHTML = modular.parse(document.documentElement.innerHTML, window);
-
-    modular.plugins.map(plugin => {
-        if (plugin["renderDone"]) plugin.renderDone();
-    });
+    window.dispatchEvent(modular.onRender);
+    modular.renderContext(document.documentElement);
+    modular.applyStyles();
+    window.dispatchEvent(modular.afterRender);
 }
 
 // 

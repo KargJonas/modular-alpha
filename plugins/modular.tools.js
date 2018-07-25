@@ -39,9 +39,9 @@ modular.addPlugin({
                 `List of plugins currently active:\n  |${tree ? tree : "  └─> (none)"}`,
                 "modular.listPlugins()"));
         };
-    },
 
-    renderDone() {
-        if (sessionStorage.compHigh === "true") document.head.appendChild(modular.tools.compHighStyle);
+        window.addEventListener("afterRender", () => {
+            if (sessionStorage.compHigh === "true") document.head.appendChild(modular.tools.compHighStyle);
+        });
     }
 });

@@ -89,6 +89,8 @@ modular.addPlugin({
                     window.history.pushState(null, null, modular.router.route);
                     render();
                 }
+                
+                document.getElementsByTagName("router")[0].innerHTML = modular.router.content;
             }
         };
 
