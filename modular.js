@@ -19,6 +19,7 @@ const modular = {
         return new Error(error);
     },
 
+    // logs a warning to the console
     info() {
         let args = Array.from(arguments);
         let inf = "Info: (Modular):\n";
@@ -41,7 +42,7 @@ const modular = {
         return obj;
     },
 
-    // Transforms all custom tags into divs with classes and pushes them into the "instances"-array in th corresponding component
+    // transforms all custom tags into divs with classes and pushes them into the "instances"-array in th corresponding component
     getInstances(context) {
         Object.entries(modular.components).map(entry => {
             const component = entry[1];
@@ -76,7 +77,9 @@ const modular = {
         }).join(" ");
     },
 
-    applyStyles() {        
+    applyStyles() {
+        modular.styleTag.innerHTML = "";
+
         Object.entries(modular.components).map(entry => {
             const component = entry[1];
             const selector = `div[data-modular-id="${component.tag}"]`;
@@ -98,7 +101,7 @@ const modular = {
             component.rendered = component.render(Object.assign(component.props, modular.elemToObj(instance) || {}));
             modular.tempEl.pop();
             instance.innerHTML = component.rendered;
-            modular.renderContext(instance)
+            modular.renderContext(instance);
         });
     },
 
@@ -186,7 +189,6 @@ class Component {
         this.__data = {};
         this.__data.instances = [];
         modular.components[this.tag] = this;
-        // modular.components.push(this);
     }
 }
 
