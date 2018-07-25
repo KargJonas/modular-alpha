@@ -174,3 +174,5 @@ After you have created all of your components, you have to call render() inorder
 ```
 ### Output
 ![example-img](https://github.com/KargJonas/random/blob/master/modular/example-image-5.png)
+
+## The m-if attribute

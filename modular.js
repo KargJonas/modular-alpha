@@ -3,10 +3,6 @@
 "use strict";
 
 // 
-// use the word "interlacing" for elements in elements
-// 
-
-// 
 // core
 const modular = {
     // hiding/unhiding the entire page
@@ -29,14 +25,15 @@ const modular = {
     // transform style-object ( css: { .. } ) to global CSS
     transformStyleObj(obj) {
         let res = [];
+        let wrapper = document.createElement("div");
 
         Object.entries(obj).map(entry => {
             if (typeof entry[1] !== "string") {
-                Object.assign(modular.wrapper.style, entry[1]);
-                entry[1] = modular.wrapper.getAttribute("style");
+                Object.assign(wrapper.style, entry[1]);
+                entry[1] = wrapper.getAttribute("style");
             }
             res.push(entry);
-            modular.wrapper.removeAttribute("style");
+            wrapper.removeAttribute("style");
         });
 
         return res;
@@ -90,18 +87,15 @@ const modular = {
             if (context.getElementsByTagName(comp.tag)[0]) components.push(comp);
         });
 
-
         if (!components) return;
 
         for (const component of components) {
-            let instances = context.getElementsByTagName(component.tag);
-            let css = [];
-
-            for (let i = instances.length - 1; i >= 0; i--) {
-                let ifAttribute = instances[i].getAttribute("m-if");
+            let instances = Array.from(context.getElementsByTagName(component.tag));
+            instances.map(instance => {
+                let ifAttribute = instance.getAttribute("m-if");
                 if (ifAttribute) {
                     ifAttribute = eval(ifAttribute);
-                    instances[i].removeAttribute("m-if");
+                    instance.removeAttribute("m-if");
 
                 } else ifAttribute = true;
 
@@ -111,7 +105,7 @@ const modular = {
                         "modular.toHtml()");
 
                     modular.tempEl.push("");
-                    component.rendered = component.render(Object.assign(component.props, modular.elemToObj(instances[i]) || {}));
+                    component.rendered = component.render(Object.assign(component.props, modular.elemToObj(instance) || {}));
                     modular.tempEl.pop();
 
                     if (!component.rendered) throw modular.err(
@@ -122,18 +116,16 @@ const modular = {
                         `A Modules "render"-function must return a string.`,
                         "modular.toHtml()");
 
-                    modular.wrapper.innerHTML = component.rendered;
-                    modular.wrapper.removeAttribute("class");
+                    let wrapper = document.createElement("div");
+                    wrapper.innerHTML = component.rendered;
+                    wrapper.classList.add(component.className);
+                    wrapper.classList.add("_component_");
+                    modular.renderInContext(wrapper);
+                    instance.outerHTML = wrapper.outerHTML;
 
-                    component.rendered = modular.wrapper;
-                    component.rendered.classList.add(component.className);
-                    component.rendered.classList.add("_component_");
+                } else instance.outerHTML = "";
+            });
 
-                    modular.renderInContext(component.rendered);
-                    if (instances[i]) instances[i].outerHTML = component.rendered.outerHTML;
-
-                } else instances[i].outerHTML = "";
-            }
             modular.documentStyle.innerHTML += component.transformedCss;
         }
         document.head.appendChild(modular.documentStyle);
@@ -199,7 +191,6 @@ const modular = {
     tempEl: [],
     documentStyle: document.createElement("style"),
     scriptTag: document.createElement("script"),
-    wrapper: document.createElement("div"),
     initialDocument: undefined,
     plugins: [],
     initPerf: performance.now()
@@ -233,7 +224,6 @@ class Component {
             "Missing attributes.",
             `The attributes "tag" and "render()" are required.`,
             "new Module()");
-
 
         Object.assign(this, conf);
         this.props = (conf.props ? conf.props : {});
