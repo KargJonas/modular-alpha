@@ -1,4 +1,4 @@
-// Modular v2
+// Modular
 // Jonas Karg 2018
 "use strict";
 
