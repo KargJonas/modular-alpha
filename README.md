@@ -7,7 +7,7 @@
 
 <br>
 
-![logo](https://github.com/KargJonas/random/blob/master/modular/Modular-Logo.png)
+![logo](https://github.com/KargJonas/random/blob/master/modular.js-old-version/Modular-Logo.png)
 
 > Using modular in your project is simple. Just include it in your HTML with all the plugins you want to use following it and you're ready to go.
 
@@ -130,7 +130,7 @@ After you have created all of your components, you have to call render() inorder
 ```
 
 ### Output
-![example-img](https://github.com/KargJonas/random/blob/master/modular/example-image-4.png)
+![example-img](https://github.com/KargJonas/random/blob/master/modular.js-old-version/example-image-4.png)
 
 ## el()
 > The "el"-function is a global function, which is supposed to help you work with elements in "component.render". You can pass as many strings into "el()" as you want. They will be joined and then returned. When el() is called next time it's arguments will again be joined and added to the provious ones. When the components' render-function returns a value el's content is cleared ().
@@ -173,6 +173,6 @@ After you have created all of your components, you have to call render() inorder
     <my-component title="Second list" loop="0"></my-component>
 ```
 ### Output
-![example-img](https://github.com/KargJonas/random/blob/master/modular/example-image-5.png)
+![example-img](https://github.com/KargJonas/random/blob/master/modular.js-old-version/example-image-5.png)
 
 ## The m-if attribute
